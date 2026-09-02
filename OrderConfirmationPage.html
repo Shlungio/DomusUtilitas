@@ -1,0 +1,982 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+
+  <title>DomusUtilitas | Order Receipt</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+
+  <!-- =========================
+       PRINT STYLING
+  ========================== -->
+  <style>
+
+    @media print {
+
+      body {
+        background: white !important;
+        color: black !important;
+      }
+
+      header,
+      .no-print {
+        display: none !important;
+      }
+
+      main {
+        max-width: 100% !important;
+        padding: 0 !important;
+      }
+
+      #receipt-card {
+        border: none !important;
+        box-shadow: none !important;
+        background: white !important;
+        color: black !important;
+      }
+
+      #receipt-card .text-gray-400,
+      #receipt-card .text-gray-300 {
+        color: #444 !important;
+      }
+
+      #receipt-card .bg-gray-900,
+      #receipt-card .bg-gray-800 {
+        background: white !important;
+      }
+
+      #receipt-card .border-gray-700 {
+        border-color: #ccc !important;
+      }
+
+    }
+
+  </style>
+
+</head>
+
+
+<body class="min-h-screen bg-gray-900 text-gray-100">
+
+
+  <!-- =========================
+       HEADER
+  ========================== -->
+  <header class="sticky top-0 z-10 border-b border-gray-800 bg-gray-950/95">
+
+    <div class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-5 py-3">
+
+
+      <!-- HOME -->
+      <a
+        href="HomePage.html"
+        class="hover:text-blue-400"
+      >
+        Home
+      </a>
+
+
+      <!-- LOGO -->
+      <a
+        href="ProductPage.html"
+        class="flex items-center gap-3"
+      >
+
+        <img
+          src="logo.png"
+          class="h-11 w-11 rounded-full"
+          alt="DomusUtilitas"
+        >
+
+        <b>DomusUtilitas</b>
+
+      </a>
+
+
+      <!-- NAVIGATION -->
+      <div class="flex flex-wrap items-center gap-4">
+
+        <nav class="flex items-center gap-4 text-sm">
+
+          <a
+            href="ProductPage.html"
+            class="hover:text-blue-400"
+          >
+            Products
+          </a>
+
+
+          <a
+            href="OrderHistoryPage.html"
+            class="hover:text-blue-400"
+          >
+            Orders
+          </a>
+
+
+          <a
+            href="CartPage.html"
+            class="rounded bg-blue-600 px-3 py-1 hover:bg-blue-500"
+          >
+            Cart
+            <span id="cart-count">0</span>
+          </a>
+
+        </nav>
+
+
+        <!-- CURRENT USER -->
+        <span
+          id="customer-name"
+          class="border-l border-gray-700 pl-4 text-sm text-gray-400"
+        ></span>
+
+
+        <!-- LOGOUT -->
+        <button
+          id="logout-btn"
+          class="rounded bg-red-600 px-3 py-1 text-sm hover:bg-red-500"
+        >
+          Logout
+        </button>
+
+      </div>
+
+    </div>
+
+  </header>
+
+
+
+  <!-- =========================
+       MAIN
+  ========================== -->
+  <main class="mx-auto max-w-2xl px-5 py-12">
+
+
+    <!-- =========================
+         RECEIPT
+    ========================== -->
+    <div
+      id="receipt-card"
+      class="rounded-xl border border-gray-700 bg-gray-800 p-8 shadow"
+    >
+
+
+      <!-- SUCCESS -->
+      <div class="text-center">
+
+        <div
+          class="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-green-900 text-3xl font-bold text-green-300 no-print"
+        >
+          ✓
+        </div>
+
+
+        <h1 class="text-3xl font-bold">
+          Order Confirmed
+        </h1>
+
+
+        <p class="mt-2 text-gray-400">
+          Thank you for shopping with DomusUtilitas.
+        </p>
+
+      </div>
+
+
+
+      <!-- =========================
+           RECEIPT HEADER
+      ========================== -->
+      <div class="mt-8 border-y border-gray-700 py-5">
+
+        <div class="grid gap-4 sm:grid-cols-2">
+
+
+          <!-- ORDER NUMBER -->
+          <div>
+
+            <p class="text-sm text-gray-400">
+              Order Number
+            </p>
+
+            <p
+              id="order-number"
+              class="mt-1 font-bold text-blue-400"
+            >
+              Loading...
+            </p>
+
+          </div>
+
+
+          <!-- DATE -->
+          <div class="sm:text-right">
+
+            <p class="text-sm text-gray-400">
+              Order Date
+            </p>
+
+            <p
+              id="order-date"
+              class="mt-1 font-semibold"
+            >
+              Loading...
+            </p>
+
+          </div>
+
+
+          <!-- CUSTOMER -->
+          <div>
+
+            <p class="text-sm text-gray-400">
+              Customer
+            </p>
+
+            <p
+              id="receipt-customer"
+              class="mt-1 font-semibold"
+            >
+            </p>
+
+          </div>
+
+
+          <!-- STATUS -->
+          <div class="sm:text-right">
+
+            <p class="text-sm text-gray-400">
+              Status
+            </p>
+
+            <span
+              id="order-status"
+              class="mt-1 inline-block rounded px-3 py-1 text-sm font-semibold"
+            >
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- =========================
+           ORDER ITEMS
+      ========================== -->
+      <div class="mt-7">
+
+        <h2 class="mb-4 text-lg font-bold">
+          Order Items
+        </h2>
+
+
+        <!-- TABLE HEADER -->
+        <div
+          class="hidden grid-cols-12 border-b border-gray-700 pb-3 text-sm text-gray-400 sm:grid"
+        >
+
+          <div class="col-span-5">
+            Product
+          </div>
+
+          <div class="col-span-2 text-center">
+            Price
+          </div>
+
+          <div class="col-span-2 text-center">
+            Qty
+          </div>
+
+          <div class="col-span-3 text-right">
+            Subtotal
+          </div>
+
+        </div>
+
+
+        <!-- ITEMS -->
+        <div
+          id="receipt-items"
+          class="divide-y divide-gray-700"
+        >
+
+          <p class="py-5 text-center text-gray-400">
+            Loading receipt...
+          </p>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- =========================
+           TOTAL
+      ========================== -->
+      <div
+        class="mt-6 flex items-center justify-between border-t border-gray-700 pt-5"
+      >
+
+        <span class="text-lg font-bold">
+          Total
+        </span>
+
+        <span
+          id="receipt-total"
+          class="text-2xl font-bold text-blue-400"
+        >
+          ₱0.00
+        </span>
+
+      </div>
+
+
+
+      <!-- =========================
+           MESSAGE
+      ========================== -->
+      <p class="mt-7 text-center text-sm leading-6 text-gray-400">
+        You can view your Order History for future status updates.
+      </p>
+
+
+
+      <!-- =========================
+           ACTION BUTTONS
+      ========================== -->
+      <div
+        class="no-print mt-8 grid gap-3 sm:grid-cols-3"
+      >
+
+
+        <!-- PRINT -->
+        <button
+          id="print-btn"
+          class="rounded bg-green-600 px-5 py-3 font-semibold hover:bg-green-500"
+        >
+          Print Receipt
+        </button>
+
+
+        <!-- HISTORY -->
+        <a
+          href="OrderHistoryPage.html"
+          class="rounded bg-blue-600 px-5 py-3 text-center font-semibold hover:bg-blue-500"
+        >
+          Order History
+        </a>
+
+
+        <!-- SHOP -->
+        <a
+          href="ProductPage.html"
+          class="rounded bg-gray-700 px-5 py-3 text-center font-semibold hover:bg-gray-600"
+        >
+          Continue Shopping
+        </a>
+
+      </div>
+
+    </div>
+
+  </main>
+
+
+
+<script>
+
+const API = 'DomusUtilitas_api/';
+const KEY = 'du_cart_v1';
+
+let orderId = null;
+
+
+// ==========================
+// FORMAT MONEY
+// ==========================
+
+function money(value) {
+
+  return '₱' + Number(value).toLocaleString(
+    'en-PH',
+    {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }
+  );
+
+}
+
+
+// ==========================
+// FORMAT DATE
+// ==========================
+
+function formatDate(value) {
+
+  const date =
+    new Date(
+      value.replace(
+        ' ',
+        'T'
+      )
+    );
+
+
+  return date.toLocaleString(
+    'en-PH',
+    {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit'
+    }
+  );
+
+}
+
+
+// ==========================
+// CHECK CUSTOMER SESSION
+// ==========================
+
+async function checkCustomer() {
+
+  try {
+
+    const response =
+      await fetch(
+        API + 'auth/session.php',
+        {
+          credentials: 'include'
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !data.ok ||
+      !data.logged_in ||
+      data.user.role !== 'customer'
+    ) {
+
+      window.location.href =
+        'LoginPage.html';
+
+      return false;
+
+    }
+
+
+    document
+      .getElementById(
+        'customer-name'
+      )
+      .textContent =
+      data.user.username;
+
+
+    document
+      .getElementById(
+        'receipt-customer'
+      )
+      .textContent =
+      data.user.username;
+
+
+    return true;
+
+
+  } catch (error) {
+
+    window.location.href =
+      'LoginPage.html';
+
+    return false;
+
+  }
+
+}
+
+
+// ==========================
+// UPDATE CART COUNT
+// ==========================
+
+function updateCartCount() {
+
+  let cart = {};
+
+
+  try {
+
+    cart =
+      JSON.parse(
+        localStorage.getItem(KEY)
+      ) || {};
+
+  } catch {
+
+    cart = {};
+
+  }
+
+
+  const count =
+    Object.values(cart)
+      .reduce(
+        (total, item) =>
+          total +
+          Number(item.qty || 0),
+        0
+      );
+
+
+  document
+    .getElementById(
+      'cart-count'
+    )
+    .textContent =
+    count;
+
+}
+
+
+// ==========================
+// GET ORDER ID
+// ==========================
+
+function getOrderId() {
+
+  const params =
+    new URLSearchParams(
+      window.location.search
+    );
+
+
+  orderId =
+    params.get(
+      'order_id'
+    );
+
+
+  if (!orderId) {
+
+    window.location.href =
+      'ProductPage.html';
+
+    return false;
+
+  }
+
+
+  return true;
+
+}
+
+
+// ==========================
+// STATUS STYLE
+// ==========================
+
+function setStatus(status) {
+
+  const element =
+    document.getElementById(
+      'order-status'
+    );
+
+
+  element.textContent =
+    status;
+
+
+  element.className =
+    'mt-1 inline-block rounded px-3 py-1 text-sm font-semibold';
+
+
+  switch (status) {
+
+    case 'Pending':
+
+      element.classList.add(
+        'bg-yellow-900',
+        'text-yellow-300'
+      );
+
+      break;
+
+
+    case 'Processing':
+
+      element.classList.add(
+        'bg-blue-900',
+        'text-blue-300'
+      );
+
+      break;
+
+
+    case 'Shipped':
+
+      element.classList.add(
+        'bg-purple-900',
+        'text-purple-300'
+      );
+
+      break;
+
+
+    case 'Completed':
+
+      element.classList.add(
+        'bg-green-900',
+        'text-green-300'
+      );
+
+      break;
+
+
+    case 'Cancelled':
+
+      element.classList.add(
+        'bg-red-900',
+        'text-red-300'
+      );
+
+      break;
+
+
+    default:
+
+      element.classList.add(
+        'bg-gray-700',
+        'text-gray-300'
+      );
+
+  }
+
+}
+
+
+// ==========================
+// CREATE ITEM
+// ==========================
+
+function createReceiptItem(item) {
+
+  const row =
+    document.createElement(
+      'div'
+    );
+
+
+  row.className =
+    'grid gap-2 py-4 sm:grid-cols-12 sm:items-center';
+
+
+  // PRODUCT
+  const product =
+    document.createElement(
+      'div'
+    );
+
+  product.className =
+    'sm:col-span-5';
+
+
+  const name =
+    document.createElement(
+      'p'
+    );
+
+  name.className =
+    'font-semibold';
+
+  name.textContent =
+    item.product_name;
+
+
+  product.appendChild(
+    name
+  );
+
+
+  // PRICE
+  const price =
+    document.createElement(
+      'div'
+    );
+
+  price.className =
+    'text-sm text-gray-400 sm:col-span-2 sm:text-center';
+
+  price.textContent =
+    money(item.price);
+
+
+  // QUANTITY
+  const quantity =
+    document.createElement(
+      'div'
+    );
+
+  quantity.className =
+    'text-sm text-gray-400 sm:col-span-2 sm:text-center';
+
+  quantity.textContent =
+    '× ' + item.quantity;
+
+
+  // SUBTOTAL
+  const subtotal =
+    document.createElement(
+      'div'
+    );
+
+  subtotal.className =
+    'font-semibold sm:col-span-3 sm:text-right';
+
+  subtotal.textContent =
+    money(item.subtotal);
+
+
+  row.append(
+    product,
+    price,
+    quantity,
+    subtotal
+  );
+
+
+  return row;
+
+}
+
+
+// ==========================
+// LOAD RECEIPT
+// ==========================
+
+async function loadReceipt() {
+
+  const itemsContainer =
+    document.getElementById(
+      'receipt-items'
+    );
+
+
+  try {
+
+    const response =
+      await fetch(
+        API +
+        'orders/details.php?id=' +
+        encodeURIComponent(
+          orderId
+        ),
+        {
+          credentials: 'include'
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (!data.ok) {
+
+      throw new Error(
+        data.error ||
+        'Unable to load receipt.'
+      );
+
+    }
+
+
+    const order =
+      data.order;
+
+
+    // ORDER NUMBER
+    document
+      .getElementById(
+        'order-number'
+      )
+      .textContent =
+      '#' + order.id;
+
+
+    // DATE
+    document
+      .getElementById(
+        'order-date'
+      )
+      .textContent =
+      formatDate(
+        order.created_at
+      );
+
+
+    // STATUS
+    setStatus(
+      order.status
+    );
+
+
+    // TOTAL
+    document
+      .getElementById(
+        'receipt-total'
+      )
+      .textContent =
+      money(
+        order.total_amount
+      );
+
+
+    // ITEMS
+    itemsContainer.replaceChildren();
+
+
+    order.items.forEach(
+      item => {
+
+        itemsContainer.appendChild(
+          createReceiptItem(
+            item
+          )
+        );
+
+      }
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      error
+    );
+
+
+    itemsContainer.innerHTML =
+      `
+        <p class="py-5 text-center text-red-400">
+          Unable to load receipt.
+        </p>
+      `;
+
+  }
+
+}
+
+
+// ==========================
+// PRINT RECEIPT
+// ==========================
+
+document
+  .getElementById(
+    'print-btn'
+  )
+  .addEventListener(
+    'click',
+    () => {
+
+      window.print();
+
+    }
+  );
+
+
+// ==========================
+// LOGOUT
+// ==========================
+
+document
+  .getElementById(
+    'logout-btn'
+  )
+  .addEventListener(
+    'click',
+    async () => {
+
+      try {
+
+        await fetch(
+          API +
+          'auth/logout.php',
+          {
+            method: 'POST',
+            credentials: 'include'
+          }
+        );
+
+      } finally {
+
+        window.location.href =
+          'LoginPage.html';
+
+      }
+
+    }
+  );
+
+
+// ==========================
+// START PAGE
+// ==========================
+
+async function start() {
+
+  const isCustomer =
+    await checkCustomer();
+
+
+  if (!isCustomer) {
+
+    return;
+
+  }
+
+
+  updateCartCount();
+
+
+  if (!getOrderId()) {
+
+    return;
+
+  }
+
+
+  await loadReceipt();
+
+}
+
+
+start();
+
+</script>
+
+</body>
+
+</html>

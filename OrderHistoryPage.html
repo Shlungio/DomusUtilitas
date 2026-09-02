@@ -1,0 +1,619 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+
+  <title>DomusUtilitas | Order History</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+
+<body class="min-h-screen bg-gray-900 text-gray-100">
+
+
+  <!-- =========================
+       HEADER
+  ========================== -->
+  <header class="sticky top-0 z-10 border-b border-gray-800 bg-gray-950/95">
+
+    <div class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-5 py-3">
+	
+      <!-- LOGO -->
+      <a
+        href="ProductPage.html"
+        class="flex items-center gap-3"
+      >
+
+        <img
+          src="logo.png"
+          class="h-11 w-11 rounded-full"
+          alt="DomusUtilitas"
+        >
+
+        <b>DomusUtilitas</b>
+
+      </a>
+
+
+      <!-- NAVIGATION -->
+      <div class="flex flex-wrap items-center gap-4">
+
+        <nav class="flex items-center gap-4 text-sm">
+
+		<a
+		  href="HomePage.html"
+		  class="hover:text-blue-400"
+		>
+		  Home
+		</a>
+
+          <a
+            href="ProductPage.html"
+            class="hover:text-blue-400"
+          >
+            Products
+          </a>
+
+
+          <a
+            href="OrderHistoryPage.html"
+            class="font-semibold text-blue-400"
+          >
+            Orders
+          </a>
+
+
+          <a
+            href="CartPage.html"
+            class="rounded bg-blue-600 px-3 py-1 hover:bg-blue-500"
+          >
+            Cart
+            <span id="cart-count">0</span>
+          </a>
+
+        </nav>
+
+
+        <!-- CURRENT USER -->
+        <span
+          id="customer-name"
+          class="border-l border-gray-700 pl-4 text-sm text-gray-400"
+        ></span>
+
+
+        <!-- LOGOUT -->
+        <button
+          id="logout-btn"
+          class="rounded bg-red-600 px-3 py-1 text-sm hover:bg-red-500"
+        >
+          Logout
+        </button>
+
+      </div>
+
+    </div>
+
+  </header>
+
+
+  <!-- =========================
+       MAIN
+  ========================== -->
+  <main class="mx-auto max-w-5xl px-5 py-10">
+
+
+    <!-- TITLE -->
+    <div class="mb-8">
+
+      <h1 class="text-3xl font-bold">
+        Order History
+      </h1>
+
+      <p class="mt-2 text-gray-400">
+        View your previous DomusUtilitas orders.
+      </p>
+
+    </div>
+
+
+    <!-- STATUS -->
+    <p
+      id="status"
+      class="text-center text-gray-400"
+    >
+      Loading orders...
+    </p>
+
+
+    <!-- ORDER LIST -->
+    <div
+      id="orders"
+      class="space-y-6"
+    ></div>
+
+  </main>
+
+
+<script>
+
+const API = 'DomusUtilitas_api/';
+const KEY = 'du_cart_v1';
+
+
+// ==========================
+// CHECK CUSTOMER SESSION
+// ==========================
+
+async function checkCustomer() {
+
+  try {
+
+    const response = await fetch(
+      API + 'auth/session.php',
+      {
+        credentials: 'include'
+      }
+    );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !data.ok ||
+      !data.logged_in ||
+      data.user.role !== 'customer'
+    ) {
+
+      window.location.href =
+        'LoginPage.html';
+
+      return false;
+
+    }
+
+
+    document
+      .getElementById('customer-name')
+      .textContent =
+      data.user.username;
+
+
+    return true;
+
+
+  } catch (error) {
+
+    window.location.href =
+      'LoginPage.html';
+
+    return false;
+
+  }
+
+}
+
+
+// ==========================
+// CART COUNT
+// ==========================
+
+function updateCartCount() {
+
+  let cart = {};
+
+
+  try {
+
+    cart =
+      JSON.parse(
+        localStorage.getItem(KEY)
+      ) || {};
+
+  } catch {
+
+    cart = {};
+
+  }
+
+
+  const count =
+    Object.values(cart)
+      .reduce(
+        (total, item) =>
+          total + Number(item.qty || 0),
+        0
+      );
+
+
+  document
+    .getElementById('cart-count')
+    .textContent =
+    count;
+
+}
+
+
+// ==========================
+// FORMAT MONEY
+// ==========================
+
+function money(value) {
+
+  return '₱' + Number(value).toLocaleString(
+    'en-PH',
+    {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }
+  );
+
+}
+
+
+// ==========================
+// FORMAT DATE
+// ==========================
+
+function formatDate(dateValue) {
+
+  const date =
+    new Date(dateValue);
+
+
+  return date.toLocaleString(
+    'en-PH',
+    {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit'
+    }
+  );
+
+}
+
+
+// ==========================
+// ORDER STATUS STYLE
+// ==========================
+
+function statusClass(status) {
+
+  switch (status) {
+
+    case 'Pending':
+
+      return 'bg-yellow-900 text-yellow-300';
+
+
+    case 'Processing':
+
+      return 'bg-blue-900 text-blue-300';
+
+
+    case 'Shipped':
+
+      return 'bg-purple-900 text-purple-300';
+
+
+    case 'Completed':
+
+      return 'bg-green-900 text-green-300';
+
+
+    case 'Cancelled':
+
+      return 'bg-red-900 text-red-300';
+
+
+    default:
+
+      return 'bg-gray-700 text-gray-300';
+
+  }
+
+}
+
+
+// ==========================
+// LOAD ORDER HISTORY
+// ==========================
+
+async function loadOrders() {
+
+  const status =
+    document.getElementById(
+      'status'
+    );
+
+
+  try {
+
+    const response =
+      await fetch(
+        API + 'orders/history.php',
+        {
+          credentials: 'include'
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (!data.ok) {
+
+      throw new Error(
+        data.error ||
+        'Unable to load orders.'
+      );
+
+    }
+
+
+    renderOrders(
+      data.orders
+    );
+
+
+  } catch (error) {
+
+    status.textContent =
+      error.message;
+
+  }
+
+}
+
+
+// ==========================
+// RENDER ORDERS
+// ==========================
+
+function renderOrders(orders) {
+
+  const root =
+    document.getElementById(
+      'orders'
+    );
+
+
+  const status =
+    document.getElementById(
+      'status'
+    );
+
+
+  root.replaceChildren();
+
+
+  // NO ORDERS
+  if (orders.length === 0) {
+
+    status.textContent =
+      'You have not placed any orders yet.';
+
+    return;
+
+  }
+
+
+  status.textContent = '';
+
+
+  // DISPLAY ORDERS
+  orders.forEach(order => {
+
+    const card =
+      document.createElement(
+        'article'
+      );
+
+
+    card.className =
+      'overflow-hidden rounded-xl border border-gray-700 bg-gray-800';
+
+
+    // ==========================
+    // ORDER HEADER
+    // ==========================
+
+    const header =
+      document.createElement(
+        'div'
+      );
+
+
+    header.className =
+      'flex flex-col justify-between gap-4 border-b border-gray-700 p-5 sm:flex-row sm:items-center';
+
+
+    header.innerHTML = `
+
+      <div>
+
+        <h2 class="text-lg font-bold">
+          Order #${order.id}
+        </h2>
+
+
+        <p class="mt-1 text-sm text-gray-400">
+          ${formatDate(order.created_at)}
+        </p>
+
+      </div>
+
+
+      <div class="flex flex-wrap items-center gap-4">
+
+        <span
+          class="
+            rounded px-3 py-1 text-sm font-semibold
+            ${statusClass(order.status)}
+          "
+        >
+          ${order.status}
+        </span>
+
+
+        <span class="text-lg font-bold text-blue-400">
+          ${money(order.total_amount)}
+        </span>
+
+      </div>
+
+    `;
+
+
+    card.appendChild(
+      header
+    );
+
+
+    // ==========================
+    // ORDER ITEMS
+    // ==========================
+
+    const itemContainer =
+      document.createElement(
+        'div'
+      );
+
+
+    itemContainer.className =
+      'divide-y divide-gray-700';
+
+
+    order.items.forEach(item => {
+
+      const itemRow =
+        document.createElement(
+          'div'
+        );
+
+
+      itemRow.className =
+        'flex flex-col justify-between gap-3 p-5 sm:flex-row sm:items-center';
+
+
+      itemRow.innerHTML = `
+
+        <div>
+
+          <p class="font-semibold">
+            ${item.product_name}
+          </p>
+
+
+          <p class="mt-1 text-sm text-gray-400">
+
+            ${money(item.price)}
+            ×
+            ${item.quantity}
+
+          </p>
+
+        </div>
+
+
+        <p class="font-semibold">
+          ${money(item.subtotal)}
+        </p>
+
+      `;
+
+
+      itemContainer.appendChild(
+        itemRow
+      );
+
+    });
+
+
+    card.appendChild(
+      itemContainer
+    );
+
+
+    root.appendChild(
+      card
+    );
+
+  });
+
+}
+
+
+// ==========================
+// LOGOUT
+// ==========================
+
+document
+  .getElementById('logout-btn')
+  .addEventListener(
+    'click',
+    async () => {
+
+      try {
+
+        await fetch(
+          API + 'auth/logout.php',
+          {
+            method: 'POST',
+            credentials: 'include'
+          }
+        );
+
+      } finally {
+
+        window.location.href =
+          'LoginPage.html';
+
+      }
+
+    }
+  );
+
+
+// ==========================
+// START PAGE
+// ==========================
+
+async function start() {
+
+  const isCustomer =
+    await checkCustomer();
+
+
+  if (!isCustomer) {
+
+    return;
+
+  }
+
+
+  updateCartCount();
+
+  await loadOrders();
+
+}
+
+
+start();
+
+</script>
+
+</body>
+
+</html>

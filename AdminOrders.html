@@ -1,0 +1,672 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+
+  <title>DomusUtilitas | Admin Orders</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+
+<body class="min-h-screen bg-gray-900 text-gray-100">
+
+  <!-- HEADER -->
+  <header class="border-b border-gray-800 bg-gray-950">
+
+    <div class="mx-auto flex max-w-7xl items-center justify-between px-5 py-4">
+
+      <div>
+
+        <h1 class="text-xl font-bold">
+          DomusUtilitas
+        </h1>
+
+        <p class="text-xs text-gray-400">
+          Admin Panel
+        </p>
+
+      </div>
+
+
+      <div class="flex items-center gap-4">
+
+        <span
+          id="admin-name"
+          class="text-sm text-gray-400"
+        ></span>
+
+
+        <button
+          id="logout-btn"
+          class="rounded bg-red-600 px-4 py-2 text-sm hover:bg-red-500"
+        >
+          Logout
+        </button>
+
+      </div>
+
+    </div>
+
+  </header>
+
+
+  <!-- NAVIGATION -->
+  <div class="border-b border-gray-800 bg-gray-950/70">
+
+    <nav class="mx-auto flex max-w-7xl gap-5 px-5 py-3 text-sm">
+
+      <a
+        href="AdminProducts.html"
+        class="text-gray-300 hover:text-blue-400"
+      >
+        Products
+      </a>
+
+      <a
+        href="AdminOrders.html"
+        class="font-semibold text-blue-400"
+      >
+        Orders
+      </a>
+
+    </nav>
+
+  </div>
+
+
+  <!-- MAIN -->
+  <main class="mx-auto max-w-7xl px-5 py-10">
+
+    <div class="mb-8">
+
+      <h2 class="text-3xl font-bold">
+        Customer Orders
+      </h2>
+
+      <p class="mt-2 text-gray-400">
+        View customer purchases and update order status.
+      </p>
+
+    </div>
+
+
+    <p
+      id="status"
+      class="text-center text-gray-400"
+    >
+      Loading orders...
+    </p>
+
+
+    <div
+      id="orders"
+      class="space-y-6"
+    ></div>
+
+  </main>
+
+
+<script>
+
+const API = 'DomusUtilitas_api/';
+
+
+// ==========================
+// MONEY
+// ==========================
+
+function money(value) {
+
+  return '₱' + Number(value).toLocaleString(
+    'en-PH',
+    {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }
+  );
+
+}
+
+
+// ==========================
+// DATE
+// ==========================
+
+function formatDate(value) {
+
+  const date =
+    new Date(value);
+
+
+  return date.toLocaleString(
+    'en-PH',
+    {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit'
+    }
+  );
+
+}
+
+
+// ==========================
+// STATUS COLOR
+// ==========================
+
+function statusClass(status) {
+
+  switch (status) {
+
+    case 'Pending':
+      return 'bg-yellow-900 text-yellow-300';
+
+    case 'Processing':
+      return 'bg-blue-900 text-blue-300';
+
+    case 'Shipped':
+      return 'bg-purple-900 text-purple-300';
+
+    case 'Completed':
+      return 'bg-green-900 text-green-300';
+
+    case 'Cancelled':
+      return 'bg-red-900 text-red-300';
+
+    default:
+      return 'bg-gray-700 text-gray-300';
+
+  }
+
+}
+
+
+// ==========================
+// CHECK ADMIN
+// ==========================
+
+async function checkAdmin() {
+
+  try {
+
+    const response =
+      await fetch(
+        API + 'auth/session.php',
+        {
+          credentials: 'include'
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !data.ok ||
+      !data.logged_in ||
+      data.user.role !== 'admin'
+    ) {
+
+      window.location.href =
+        'LoginPage.html';
+
+      return false;
+
+    }
+
+
+    document
+      .getElementById('admin-name')
+      .textContent =
+      'Logged in as ' + data.user.username;
+
+
+    return true;
+
+
+  } catch (error) {
+
+    window.location.href =
+      'LoginPage.html';
+
+    return false;
+
+  }
+
+}
+
+
+// ==========================
+// LOAD ORDERS
+// ==========================
+
+async function loadOrders() {
+
+  const status =
+    document.getElementById(
+      'status'
+    );
+
+
+  try {
+
+    const response =
+      await fetch(
+        API + 'admin/orders.php',
+        {
+          credentials: 'include'
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (!data.ok) {
+
+      throw new Error(
+        data.error ||
+        'Unable to load orders.'
+      );
+
+    }
+
+
+    renderOrders(
+      data.orders
+    );
+
+
+  } catch (error) {
+
+    status.textContent =
+      error.message;
+
+  }
+
+}
+
+
+// ==========================
+// RENDER ORDERS
+// ==========================
+
+function renderOrders(orders) {
+
+  const root =
+    document.getElementById(
+      'orders'
+    );
+
+
+  const status =
+    document.getElementById(
+      'status'
+    );
+
+
+  root.replaceChildren();
+
+
+  if (orders.length === 0) {
+
+    status.textContent =
+      'No customer orders found.';
+
+    return;
+
+  }
+
+
+  status.textContent = '';
+
+
+  orders.forEach(order => {
+
+    const card =
+      document.createElement(
+        'article'
+      );
+
+
+    card.className =
+      'overflow-hidden rounded-xl border border-gray-700 bg-gray-800';
+
+
+    // ==========================
+    // HEADER
+    // ==========================
+
+    const header =
+      document.createElement(
+        'div'
+      );
+
+
+    header.className =
+      'flex flex-col justify-between gap-5 border-b border-gray-700 p-5 lg:flex-row lg:items-center';
+
+
+    header.innerHTML = `
+
+      <div>
+
+        <div class="flex flex-wrap items-center gap-3">
+
+          <h3 class="text-xl font-bold">
+            Order #${order.id}
+          </h3>
+
+          <span
+            class="
+              rounded px-3 py-1 text-xs font-semibold
+              ${statusClass(order.status)}
+            "
+          >
+            ${order.status}
+          </span>
+
+        </div>
+
+
+        <p class="mt-2 text-sm text-gray-400">
+          Customer:
+          <span class="text-gray-200">
+            ${order.username || 'Deleted User'}
+          </span>
+        </p>
+
+
+        <p class="mt-1 text-sm text-gray-400">
+          ${formatDate(order.created_at)}
+        </p>
+
+      </div>
+
+
+      <div class="flex flex-wrap items-center gap-3">
+
+        <span class="mr-2 text-lg font-bold text-blue-400">
+          ${money(order.total_amount)}
+        </span>
+
+
+        <select
+		  id="status-${order.id}"
+		  class="rounded border border-gray-700 bg-gray-900 px-3 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-50"
+		  ${order.status === 'Cancelled' ? 'disabled' : ''}
+		>
+
+          <option
+            value="Pending"
+            ${order.status === 'Pending' ? 'selected' : ''}
+          >
+            Pending
+          </option>
+
+          <option
+            value="Processing"
+            ${order.status === 'Processing' ? 'selected' : ''}
+          >
+            Processing
+          </option>
+
+          <option
+            value="Shipped"
+            ${order.status === 'Shipped' ? 'selected' : ''}
+          >
+            Shipped
+          </option>
+
+          <option
+            value="Completed"
+            ${order.status === 'Completed' ? 'selected' : ''}
+          >
+            Completed
+          </option>
+
+          <option
+            value="Cancelled"
+            ${order.status === 'Cancelled' ? 'selected' : ''}
+          >
+            Cancelled
+          </option>
+
+        </select>
+
+
+        <button
+		  onclick="updateOrderStatus(${order.id})"
+		  class="rounded bg-blue-600 px-4 py-2 text-sm font-semibold hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
+		  ${order.status === 'Cancelled' ? 'disabled' : ''}
+		>
+		  ${order.status === 'Cancelled' ? 'Cancelled' : 'Update Status'}
+		</button>
+
+      </div>
+
+    `;
+
+
+    card.appendChild(
+      header
+    );
+
+
+    // ==========================
+    // ITEMS
+    // ==========================
+
+    const itemContainer =
+      document.createElement(
+        'div'
+      );
+
+
+    itemContainer.className =
+      'divide-y divide-gray-700';
+
+
+    order.items.forEach(item => {
+
+      const row =
+        document.createElement(
+          'div'
+        );
+
+
+      row.className =
+        'flex flex-col justify-between gap-3 p-5 sm:flex-row sm:items-center';
+
+
+      row.innerHTML = `
+
+        <div>
+
+          <p class="font-semibold">
+            ${item.product_name}
+          </p>
+
+          <p class="mt-1 text-sm text-gray-400">
+            ${money(item.price)}
+            ×
+            ${item.quantity}
+          </p>
+
+        </div>
+
+
+        <span class="font-semibold">
+          ${money(item.subtotal)}
+        </span>
+
+      `;
+
+
+      itemContainer.appendChild(
+        row
+      );
+
+    });
+
+
+    card.appendChild(
+      itemContainer
+    );
+
+
+    root.appendChild(
+      card
+    );
+
+  });
+
+}
+
+
+// ==========================
+// UPDATE STATUS
+// ==========================
+
+async function updateOrderStatus(
+  orderId
+) {
+
+  const select =
+    document.getElementById(
+      'status-' + orderId
+    );
+
+
+  const newStatus =
+    select.value;
+
+
+  try {
+
+    const response =
+      await fetch(
+        API +
+        'admin/update_order_status.php',
+        {
+
+          method: 'POST',
+
+          headers: {
+            'Content-Type':
+              'application/json'
+          },
+
+          credentials: 'include',
+
+          body: JSON.stringify({
+            order_id:
+              Number(orderId),
+
+            status:
+              newStatus
+          })
+
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (!data.ok) {
+
+      throw new Error(
+        data.error ||
+        'Unable to update status.'
+      );
+
+    }
+
+
+    await loadOrders();
+
+
+  } catch (error) {
+
+    alert(
+      error.message
+    );
+
+  }
+
+}
+
+
+// ==========================
+// LOGOUT
+// ==========================
+
+document
+  .getElementById('logout-btn')
+  .addEventListener(
+    'click',
+    async () => {
+
+      try {
+
+        await fetch(
+          API + 'auth/logout.php',
+          {
+            method: 'POST',
+            credentials: 'include'
+          }
+        );
+
+      } finally {
+
+        window.location.href =
+          'LoginPage.html';
+
+      }
+
+    }
+  );
+
+
+// ==========================
+// START
+// ==========================
+
+async function start() {
+
+  const isAdmin =
+    await checkAdmin();
+
+
+  if (!isAdmin) {
+
+    return;
+
+  }
+
+
+  await loadOrders();
+
+}
+
+
+start();
+
+</script>
+
+</body>
+
+</html>

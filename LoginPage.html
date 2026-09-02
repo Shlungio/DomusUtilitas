@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+
+  <title>DomusUtilitas | Login</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+
+<body class="min-h-screen bg-gray-900 text-gray-100">
+
+
+  <!-- =========================
+       HEADER
+  ========================== -->
+  <header class="border-b border-gray-800 bg-gray-950/95">
+
+    <div class="mx-auto flex max-w-7xl items-center justify-between px-5 py-3">
+
+      <!-- LOGO -->
+      <div class="flex items-center gap-3">
+
+        <img
+          src="logo.png"
+          class="h-11 w-11 rounded-full"
+          alt="DomusUtilitas"
+        >
+
+        <b>DomusUtilitas</b>
+
+      </div>
+
+		<a
+		  href="HomePage.html"
+		  class="hover:text-blue-400"
+		>
+		  Home
+		</a>
+      <!-- REGISTER LINK -->
+      <a
+        href="RegisterPage.html"
+        class="text-sm text-blue-400 hover:underline"
+      >
+        Create Account
+      </a>
+
+    </div>
+
+  </header>
+
+
+  <!-- =========================
+       MAIN
+  ========================== -->
+  <main class="mx-auto flex max-w-md flex-col px-5 py-16">
+
+
+    <h1 class="mb-1 text-center text-3xl font-bold">
+      Welcome Back
+    </h1>
+
+
+    <p class="mb-8 text-center text-gray-400">
+      Log in to your DomusUtilitas account.
+    </p>
+
+
+    <!-- LOGIN FORM -->
+    <form
+      id="login-form"
+      class="flex flex-col gap-4 rounded-xl border border-gray-700 bg-gray-800 p-6"
+    >
+
+
+      <!-- USERNAME -->
+      <div>
+
+        <label
+          for="username"
+          class="mb-1 block text-sm text-gray-300"
+        >
+          Username
+        </label>
+
+
+        <input
+          id="username"
+          name="username"
+          type="text"
+          required
+          autocomplete="username"
+          class="w-full rounded border border-gray-700 bg-gray-900 px-3 py-2 outline-none focus:border-blue-500"
+        >
+
+      </div>
+
+
+      <!-- PASSWORD -->
+      <div>
+
+        <label
+          for="password"
+          class="mb-1 block text-sm text-gray-300"
+        >
+          Password
+        </label>
+
+
+        <input
+          id="password"
+          name="password"
+          type="password"
+          required
+          autocomplete="current-password"
+          class="w-full rounded border border-gray-700 bg-gray-900 px-3 py-2 outline-none focus:border-blue-500"
+        >
+
+      </div>
+
+
+      <!-- ERROR -->
+      <p
+        id="error"
+        class="hidden text-sm text-red-400"
+      ></p>
+
+
+      <!-- LOGIN BUTTON -->
+      <button
+        type="submit"
+        id="submit-btn"
+        class="mt-2 rounded bg-blue-600 py-2 font-semibold hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
+      >
+        Log In
+      </button>
+
+    </form>
+
+
+    <p class="mt-6 text-center text-sm text-gray-400">
+
+      Don't have an account?
+
+      <a
+        href="RegisterPage.html"
+        class="text-blue-400 hover:underline"
+      >
+        Register here
+      </a>
+
+    </p>
+
+  </main>
+
+
+<script>
+
+const API = 'DomusUtilitas_api/';
+
+
+// ==========================
+// REDIRECT BY ROLE
+// ==========================
+
+function redirectUser(user) {
+
+  if (user.role === 'admin') {
+
+    window.location.href =
+      'AdminProducts.html';
+
+  } else {
+
+    window.location.href =
+      'ProductPage.html';
+
+  }
+
+}
+
+
+// ==========================
+// CHECK EXISTING SESSION
+// ==========================
+
+async function checkExistingSession() {
+
+  try {
+
+    const response = await fetch(
+      API + 'auth/session.php',
+      {
+        credentials: 'include'
+      }
+    );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      data.ok &&
+      data.logged_in &&
+      data.user
+    ) {
+
+      redirectUser(
+        data.user
+      );
+
+    }
+
+
+  } catch (error) {
+
+    console.error(
+      'Unable to check session:',
+      error
+    );
+
+  }
+
+}
+
+
+// ==========================
+// LOGIN
+// ==========================
+
+document
+  .getElementById('login-form')
+  .addEventListener(
+    'submit',
+    async event => {
+
+      event.preventDefault();
+
+
+      const errorEl =
+        document.getElementById(
+          'error'
+        );
+
+
+      const button =
+        document.getElementById(
+          'submit-btn'
+        );
+
+
+      errorEl.classList.add(
+        'hidden'
+      );
+
+
+      button.disabled =
+        true;
+
+
+      button.textContent =
+        'Logging in...';
+
+
+      try {
+
+        const response = await fetch(
+          API + 'auth/login.php',
+          {
+
+            method: 'POST',
+
+            headers: {
+              'Content-Type':
+                'application/json'
+            },
+
+            credentials: 'include',
+
+            body: JSON.stringify({
+
+              username:
+                document
+                  .getElementById(
+                    'username'
+                  )
+                  .value
+                  .trim(),
+
+              password:
+                document
+                  .getElementById(
+                    'password'
+                  )
+                  .value
+
+            })
+
+          }
+        );
+
+
+        const data =
+          await response.json();
+
+
+        if (!data.ok) {
+
+          throw new Error(
+            data.error ||
+            'Login failed.'
+          );
+
+        }
+
+
+        redirectUser(
+          data.user
+        );
+
+
+      } catch (error) {
+
+        errorEl.textContent =
+          error.message;
+
+
+        errorEl.classList.remove(
+          'hidden'
+        );
+
+
+      } finally {
+
+        button.disabled =
+          false;
+
+
+        button.textContent =
+          'Log In';
+
+      }
+
+    }
+  );
+
+
+// ==========================
+// START
+// ==========================
+
+checkExistingSession();
+
+</script>
+
+</body>
+
+</html>

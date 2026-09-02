@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>DomusUtilitas | Home</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+
+<body class="min-h-screen bg-gray-100 text-gray-800">
+
+  <!-- =========================
+       HEADER
+  ========================== -->
+  <header class="sticky top-0 z-10 border-b border-gray-800 bg-gray-950/95 text-gray-100">
+
+  <div class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-5 py-3">
+
+      <!-- LOGO / BRAND -->
+      <a
+        href="HomePage.html"
+        class="flex items-center gap-3"
+      >
+	  
+       <img
+		  src="logo.png"
+		  class="h-11 w-11 rounded-full"
+		  alt="DomusUtilitas"
+		>
+
+        <div>
+          <h1 class="text-xl font-bold">
+            DomusUtilitas
+          </h1>
+
+          <p class="text-xs text-gray-400">
+            Home • Lifestyle • Technology
+          </p>
+        </div>
+      </a>
+
+
+      <!-- NAVIGATION -->
+      <nav class="flex flex-wrap items-center gap-3 text-sm">
+
+        <a
+          href="HomePage.html"
+          class="rounded-lg bg-gray-700 px-4 py-2 font-semibold"
+        >
+          Home
+        </a>
+
+        <a
+          id="products-link"
+          href="LoginPage.html"
+          class="rounded-lg px-4 py-2 transition hover:bg-gray-800"
+        >
+          Products
+        </a>
+
+        <a
+          id="orders-link"
+          href="LoginPage.html"
+          class="hidden rounded-lg px-4 py-2 transition hover:bg-gray-800"
+        >
+          Orders
+        </a>
+
+        <a
+          id="cart-link"
+          href="LoginPage.html"
+          class="hidden rounded-lg px-4 py-2 transition hover:bg-gray-800"
+        >
+          Cart
+        </a>
+
+
+        <!-- GUEST BUTTONS -->
+        <div
+          id="guest-buttons"
+          class="flex items-center gap-2"
+        >
+
+          <a
+            href="LoginPage.html"
+            class="rounded-lg border border-gray-600 px-4 py-2 transition hover:bg-gray-800"
+          >
+            Log In
+          </a>
+
+          <a
+            href="RegisterPage.html"
+            class="rounded-lg bg-blue-600 px-4 py-2 font-semibold transition hover:bg-blue-700"
+          >
+            Create Account
+          </a>
+
+        </div>
+
+
+        <!-- LOGGED IN USER -->
+        <div
+          id="user-area"
+          class="hidden items-center gap-3"
+        >
+
+          <span
+            id="username"
+            class="text-gray-300"
+          ></span>
+
+          <button
+            id="logout-btn"
+            class="rounded-lg bg-red-600 px-4 py-2 transition hover:bg-red-700"
+          >
+            Logout
+          </button>
+
+        </div>
+
+      </nav>
+
+    </div>
+
+  </header>
+
+
+
+  <!-- =========================
+       HERO
+  ========================== -->
+  <main>
+
+    <section class="bg-gray-900 text-white">
+
+      <div class="mx-auto grid max-w-7xl items-center gap-10 px-6 py-20 md:grid-cols-2">
+
+        <!-- LEFT -->
+        <div>
+
+          <p class="mb-3 text-sm font-semibold uppercase tracking-widest text-blue-400">
+            Welcome to DomusUtilitas
+          </p>
+
+          <h2 class="mb-5 text-4xl font-bold leading-tight md:text-5xl">
+            Everything you need,
+            all in one place.
+          </h2>
+
+          <p class="mb-8 max-w-xl text-lg leading-8 text-gray-300">
+            Discover useful products for your home, lifestyle, and everyday
+            technology needs.
+          </p>
+
+
+          <div class="flex flex-wrap gap-3">
+
+            <a
+              id="hero-products-btn"
+              href="LoginPage.html"
+              class="rounded-lg bg-blue-600 px-6 py-3 font-semibold transition hover:bg-blue-700"
+            >
+              Browse Products
+            </a>
+
+            <a
+              id="hero-register-btn"
+              href="RegisterPage.html"
+              class="rounded-lg border border-gray-500 px-6 py-3 font-semibold transition hover:bg-gray-700"
+            >
+              Create an Account
+            </a>
+
+          </div>
+
+        </div>
+
+
+        <!-- RIGHT -->
+        <!-- We can replace this later with a real homepage image -->
+        <div class="flex min-h-[320px] items-center justify-center rounded-2xl bg-gray-700 p-10 shadow-lg">
+
+          <div class="text-center">
+
+            <img
+              src="logo.png"
+              alt="DomusUtilitas"
+              class="mx-auto mb-5 h-32 w-32 rounded-full object-cover"
+            >
+
+            <h3 class="text-2xl font-bold">
+              DomusUtilitas
+            </h3>
+
+            <p class="mt-2 text-gray-300">
+              Practical products for modern living.
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- =========================
+         CATEGORIES
+    ========================== -->
+    <section class="mx-auto max-w-7xl px-6 py-16">
+
+      <div class="mb-10 text-center">
+
+        <p class="mb-2 text-sm font-semibold uppercase tracking-wider text-blue-600">
+          Our Collection
+        </p>
+
+        <h2 class="text-3xl font-bold">
+          Shop by Category
+        </h2>
+
+        <p class="mt-3 text-gray-600">
+          Explore our three main product collections.
+        </p>
+
+      </div>
+
+
+      <div class="grid gap-6 md:grid-cols-3">
+
+        <!-- HOUSE APPLIANCES -->
+        <div class="rounded-2xl bg-white p-8 shadow transition hover:-translate-y-1 hover:shadow-lg">
+
+          <div class="mb-5 flex h-14 w-14 items-center justify-center rounded-xl bg-blue-100 text-2xl">
+            🏠
+          </div>
+
+          <h3 class="mb-3 text-xl font-bold">
+            House Appliances
+          </h3>
+
+          <p class="mb-5 leading-7 text-gray-600">
+            Appliances for cooking, cleaning, climate control, and everyday
+            household tasks.
+          </p>
+
+          <p class="text-sm font-medium text-gray-500">
+            Cooking • Floor Care • Climate Wellness
+          </p>
+
+        </div>
+
+
+        <!-- TEXTILE -->
+        <div class="rounded-2xl bg-white p-8 shadow transition hover:-translate-y-1 hover:shadow-lg">
+
+          <div class="mb-5 flex h-14 w-14 items-center justify-center rounded-xl bg-purple-100 text-2xl">
+            🛏️
+          </div>
+
+          <h3 class="mb-3 text-xl font-bold">
+            Textile
+          </h3>
+
+          <p class="mb-5 leading-7 text-gray-600">
+            Comfortable and practical textile products for bedrooms,
+            bathrooms, and dining spaces.
+          </p>
+
+          <p class="text-sm font-medium text-gray-500">
+            Bedding • Bath • Dining
+          </p>
+
+        </div>
+
+
+        <!-- GADGETS -->
+        <div class="rounded-2xl bg-white p-8 shadow transition hover:-translate-y-1 hover:shadow-lg">
+
+          <div class="mb-5 flex h-14 w-14 items-center justify-center rounded-xl bg-green-100 text-2xl">
+            💻
+          </div>
+
+          <h3 class="mb-3 text-xl font-bold">
+            Gadgets
+          </h3>
+
+          <p class="mb-5 leading-7 text-gray-600">
+            Technology essentials for computers, mobile devices, and
+            personal entertainment.
+          </p>
+
+          <p class="text-sm font-medium text-gray-500">
+            PC • Phone & Tablets • Audio
+          </p>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- =========================
+         WHY DOMUSUTILITAS
+    ========================== -->
+    <section class="bg-white">
+
+      <div class="mx-auto max-w-7xl px-6 py-16">
+
+        <div class="mb-10 text-center">
+
+          <h2 class="text-3xl font-bold">
+            Why DomusUtilitas?
+          </h2>
+
+          <p class="mt-3 text-gray-600">
+            A simple and convenient shopping experience.
+          </p>
+
+        </div>
+
+
+        <div class="grid gap-8 text-center md:grid-cols-3">
+
+          <div>
+            <div class="mb-3 text-3xl">
+              🔎
+            </div>
+
+            <h3 class="mb-2 font-bold">
+              Easy Product Search
+            </h3>
+
+            <p class="text-sm leading-6 text-gray-600">
+              Quickly search products by name, category, or subcategory.
+            </p>
+          </div>
+
+
+          <div>
+            <div class="mb-3 text-3xl">
+              🛒
+            </div>
+
+            <h3 class="mb-2 font-bold">
+              Simple Shopping
+            </h3>
+
+            <p class="text-sm leading-6 text-gray-600">
+              Add items to your cart, manage quantities, and check out easily.
+            </p>
+          </div>
+
+
+          <div>
+            <div class="mb-3 text-3xl">
+              📦
+            </div>
+
+            <h3 class="mb-2 font-bold">
+              Order Tracking
+            </h3>
+
+            <p class="text-sm leading-6 text-gray-600">
+              Review your previous orders and keep track of their current status.
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- =========================
+         CALL TO ACTION
+    ========================== -->
+    <section class="mx-auto max-w-7xl px-6 py-16">
+
+      <div class="rounded-2xl bg-gray-900 px-8 py-12 text-center text-white">
+
+        <h2 class="text-3xl font-bold">
+          Start exploring DomusUtilitas
+        </h2>
+
+        <p class="mx-auto mt-3 max-w-2xl text-gray-300">
+          Browse our growing collection of household essentials,
+          textiles, and technology.
+        </p>
+
+        <a
+          id="bottom-products-btn"
+          href="LoginPage.html"
+          class="mt-7 inline-block rounded-lg bg-blue-600 px-7 py-3 font-semibold transition hover:bg-blue-700"
+        >
+          Browse Products
+        </a>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+
+  <!-- =========================
+       FOOTER
+  ========================== -->
+  <footer class="bg-gray-900 text-gray-400">
+
+    <div class="mx-auto max-w-7xl px-6 py-6 text-center text-sm">
+
+      <p>
+        © 2026 DomusUtilitas. All rights reserved.
+      </p>
+
+    </div>
+
+  </footer>
+
+
+
+<script>
+
+const API = 'DomusUtilitas_api/';
+
+
+// ==========================
+// CHECK CURRENT SESSION
+// ==========================
+
+async function checkSession() {
+
+  try {
+
+    const response = await fetch(
+      API + 'auth/session.php',
+      {
+        credentials: 'include'
+      }
+    );
+
+    const data = await response.json();
+
+
+    // NOT LOGGED IN
+    if (
+      !data.ok ||
+      !data.logged_in
+    ) {
+      return;
+    }
+
+
+    // ==========================
+    // LOGGED IN
+    // ==========================
+
+    document
+      .getElementById('guest-buttons')
+      .classList
+      .add('hidden');
+
+
+    const userArea =
+      document.getElementById('user-area');
+
+    userArea.classList.remove('hidden');
+    userArea.classList.add('flex');
+
+
+    document.getElementById('username').textContent =
+      data.user.username;
+
+
+    // CUSTOMER
+    if (data.user.role === 'customer') {
+
+      document.getElementById('products-link').href =
+        'ProductPage.html';
+
+      document.getElementById('hero-products-btn').href =
+        'ProductPage.html';
+
+      document.getElementById('bottom-products-btn').href =
+        'ProductPage.html';
+
+
+      const orders =
+        document.getElementById('orders-link');
+
+      orders.href = 'OrderHistoryPage.html';
+      orders.classList.remove('hidden');
+
+
+      const cart =
+        document.getElementById('cart-link');
+
+      cart.href = 'CartPage.html';
+      cart.classList.remove('hidden');
+
+
+      // Hide registration CTA because customer
+      // is already logged in.
+      document
+        .getElementById('hero-register-btn')
+        .classList
+        .add('hidden');
+
+    }
+
+
+    // ADMIN
+    else if (data.user.role === 'admin') {
+
+      document.getElementById('products-link').textContent =
+        'Admin Products';
+
+      document.getElementById('products-link').href =
+        'AdminProducts.html';
+
+
+      document.getElementById('hero-products-btn').textContent =
+        'Open Admin Panel';
+
+      document.getElementById('hero-products-btn').href =
+        'AdminProducts.html';
+
+
+      document.getElementById('bottom-products-btn').textContent =
+        'Open Admin Panel';
+
+      document.getElementById('bottom-products-btn').href =
+        'AdminProducts.html';
+
+
+      document
+        .getElementById('hero-register-btn')
+        .classList
+        .add('hidden');
+
+    }
+
+  } catch (error) {
+
+    console.error(
+      'Unable to check session:',
+      error
+    );
+
+  }
+
+}
+
+
+
+// ==========================
+// LOGOUT
+// ==========================
+
+document
+  .getElementById('logout-btn')
+  .addEventListener(
+    'click',
+    async () => {
+
+      try {
+
+        await fetch(
+          API + 'auth/logout.php',
+          {
+            method: 'POST',
+            credentials: 'include'
+          }
+        );
+
+      } finally {
+
+        window.location.href =
+          'HomePage.html';
+
+      }
+
+    }
+  );
+
+
+
+// ==========================
+// START
+// ==========================
+
+checkSession();
+
+</script>
+
+</body>
+</html>

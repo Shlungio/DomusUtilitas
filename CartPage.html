@@ -1,0 +1,991 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+
+  <title>DomusUtilitas | Cart</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+
+<body class="min-h-screen bg-gray-900 text-gray-100">
+
+
+  <!-- =========================
+       HEADER
+  ========================== -->
+  <header class="sticky top-0 z-10 border-b border-gray-800 bg-gray-950/95">
+
+    <div class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-5 py-3">
+
+
+      <!-- LOGO -->
+      <a
+        href="ProductPage.html"
+        class="flex items-center gap-3"
+      >
+
+        <img
+          src="logo.png"
+          class="h-11 w-11 rounded-full"
+          alt="DomusUtilitas"
+        >
+
+        <b>DomusUtilitas</b>
+
+      </a>
+
+
+      <!-- NAVIGATION -->
+      <div class="flex flex-wrap items-center gap-4">
+
+        <nav class="flex items-center gap-4 text-sm">
+
+		<a
+		  href="HomePage.html"
+		  class="hover:text-blue-400"
+		>
+		  Home
+		</a>
+
+          <a
+            href="ProductPage.html"
+            class="hover:text-blue-400"
+          >
+            Products
+          </a>
+
+
+          <a
+            href="OrderHistoryPage.html"
+            class="hover:text-blue-400"
+          >
+            Orders
+          </a>
+
+
+          <a
+            href="CartPage.html"
+            class="rounded bg-blue-600 px-3 py-1"
+          >
+            Cart
+            <span id="cart-count">0</span>
+          </a>
+
+        </nav>
+
+
+        <!-- CURRENT USER -->
+        <span
+          id="customer-name"
+          class="border-l border-gray-700 pl-4 text-sm text-gray-400"
+        ></span>
+
+
+        <!-- LOGOUT -->
+        <button
+          id="logout-btn"
+          class="rounded bg-red-600 px-3 py-1 text-sm hover:bg-red-500"
+        >
+          Logout
+        </button>
+
+      </div>
+
+    </div>
+
+  </header>
+
+
+  <!-- =========================
+       MAIN
+  ========================== -->
+  <main class="mx-auto max-w-5xl px-5 py-10">
+
+
+    <!-- TITLE -->
+    <div class="mb-8">
+
+      <h1 class="text-3xl font-bold">
+        Shopping Cart
+      </h1>
+
+      <p class="mt-2 text-gray-400">
+        Review your items before checkout.
+      </p>
+
+    </div>
+
+
+    <div class="grid gap-6 lg:grid-cols-3">
+
+
+      <!-- =========================
+           CART ITEMS
+      ========================== -->
+      <section class="lg:col-span-2">
+
+        <div
+          id="cart-items"
+          class="space-y-4"
+        ></div>
+
+
+        <p
+          id="empty-cart"
+          class="hidden rounded-xl border border-gray-700 bg-gray-800 p-8 text-center text-gray-400"
+        >
+          Your cart is empty.
+        </p>
+
+      </section>
+
+
+      <!-- =========================
+           ORDER SUMMARY
+      ========================== -->
+      <aside
+        class="h-fit rounded-xl border border-gray-700 bg-gray-800 p-6"
+      >
+
+        <h2 class="mb-5 text-xl font-bold">
+          Order Summary
+        </h2>
+
+
+        <div class="space-y-3 text-sm">
+
+          <div class="flex justify-between">
+
+            <span class="text-gray-400">
+              Items
+            </span>
+
+            <span id="summary-items">
+              0
+            </span>
+
+          </div>
+
+
+          <div class="flex justify-between border-t border-gray-700 pt-4 text-lg font-bold">
+
+            <span>
+              Total
+            </span>
+
+            <span
+              id="summary-total"
+              class="text-blue-400"
+            >
+              ₱0.00
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <!-- CHECKOUT ERROR -->
+        <p
+          id="checkout-error"
+          class="mt-4 hidden text-sm text-red-400"
+        ></p>
+
+
+        <!-- CHECKOUT -->
+        <button
+          id="checkout-btn"
+          class="mt-6 w-full rounded bg-blue-600 py-3 font-semibold hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          Checkout
+        </button>
+
+
+        <!-- CONTINUE SHOPPING -->
+        <a
+          href="ProductPage.html"
+          class="mt-3 block text-center text-sm text-blue-400 hover:underline"
+        >
+          Continue Shopping
+        </a>
+
+      </aside>
+
+    </div>
+
+  </main>
+
+
+<script>
+
+const API = 'DomusUtilitas_api/';
+const KEY = 'du_cart_v1';
+
+let availableProducts = {};
+
+
+// ==========================
+// CHECK CUSTOMER SESSION
+// ==========================
+
+async function checkCustomer() {
+
+  try {
+
+    const response = await fetch(
+      API + 'auth/session.php',
+      {
+        credentials: 'include'
+      }
+    );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !data.ok ||
+      !data.logged_in ||
+      data.user.role !== 'customer'
+    ) {
+
+      window.location.href =
+        'LoginPage.html';
+
+      return false;
+
+    }
+
+
+    document
+      .getElementById('customer-name')
+      .textContent =
+      data.user.username;
+
+
+    return true;
+
+
+  } catch (error) {
+
+    window.location.href =
+      'LoginPage.html';
+
+    return false;
+
+  }
+
+}
+
+
+// ==========================
+// FORMAT MONEY
+// ==========================
+
+function money(value) {
+
+  return '₱' + Number(value).toLocaleString(
+    'en-PH',
+    {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }
+  );
+
+}
+
+
+// ==========================
+// GET CART
+// ==========================
+
+function getCart() {
+
+  try {
+
+    return JSON.parse(
+      localStorage.getItem(KEY)
+    ) || {};
+
+  } catch {
+
+    return {};
+
+  }
+
+}
+
+
+// ==========================
+// SAVE CART
+// ==========================
+
+function saveCart(cart) {
+
+  localStorage.setItem(
+    KEY,
+    JSON.stringify(cart)
+  );
+
+  renderCart();
+
+}
+
+
+// ==========================
+// LOAD CURRENT PRODUCTS
+// ==========================
+
+async function loadProducts() {
+
+  try {
+
+    const response = await fetch(
+      API + 'products.php'
+    );
+
+
+    const data =
+      await response.json();
+
+
+    if (!data.ok) {
+
+      throw new Error(
+        data.error ||
+        'Unable to load products.'
+      );
+
+    }
+
+
+    availableProducts = {};
+
+
+    data.products.forEach(product => {
+
+      availableProducts[product.id] =
+        product;
+
+    });
+
+
+    const cart =
+      getCart();
+
+
+    let changed = false;
+
+
+    Object.values(cart).forEach(item => {
+
+      const product =
+        availableProducts[item.id];
+
+
+      if (product) {
+
+        item.name =
+          product.name;
+
+        item.price =
+          Number(product.price);
+
+
+        if (
+          Number(item.qty) >
+          Number(product.stock)
+        ) {
+
+          item.qty =
+            Number(product.stock);
+
+        }
+
+
+        changed = true;
+
+      }
+
+    });
+
+
+    if (changed) {
+
+      localStorage.setItem(
+        KEY,
+        JSON.stringify(cart)
+      );
+
+    }
+
+
+  } catch (error) {
+
+    console.error(error);
+
+  }
+
+
+  renderCart();
+
+}
+
+
+// ==========================
+// CHANGE QUANTITY
+// ==========================
+
+function changeQuantity(
+  productId,
+  amount
+) {
+
+  const cart =
+    getCart();
+
+
+  const item =
+    cart[productId];
+
+
+  if (!item) {
+
+    return;
+
+  }
+
+
+  const product =
+    availableProducts[productId];
+
+
+  if (!product) {
+
+    alert(
+      'This product is no longer available.'
+    );
+
+    return;
+
+  }
+
+
+  const newQuantity =
+    Number(item.qty) +
+    amount;
+
+
+  // Remove if quantity becomes 0
+  if (newQuantity <= 0) {
+
+    delete cart[productId];
+
+    saveCart(cart);
+
+    return;
+
+  }
+
+
+  // Prevent quantity greater than stock
+  if (
+    newQuantity >
+    Number(product.stock)
+  ) {
+
+    alert(
+      'Only ' +
+      product.stock +
+      ' available in stock.'
+    );
+
+    return;
+
+  }
+
+
+  item.qty =
+    newQuantity;
+
+
+  saveCart(cart);
+
+}
+
+
+// ==========================
+// REMOVE ITEM
+// ==========================
+
+function removeItem(productId) {
+
+  const cart =
+    getCart();
+
+
+  delete cart[productId];
+
+
+  saveCart(cart);
+
+}
+
+
+// ==========================
+// RENDER CART
+// ==========================
+
+function renderCart() {
+
+  const cart =
+    getCart();
+
+
+  const items =
+    Object.values(cart);
+
+
+  const root =
+    document.getElementById(
+      'cart-items'
+    );
+
+
+  const emptyMessage =
+    document.getElementById(
+      'empty-cart'
+    );
+
+
+  const checkoutButton =
+    document.getElementById(
+      'checkout-btn'
+    );
+
+
+  root.replaceChildren();
+
+
+  let total = 0;
+  let itemCount = 0;
+
+  let hasUnavailableItem =
+    false;
+
+
+  // EMPTY CART
+  if (items.length === 0) {
+
+    emptyMessage.classList.remove(
+      'hidden'
+    );
+
+    checkoutButton.disabled =
+      true;
+
+  } else {
+
+    emptyMessage.classList.add(
+      'hidden'
+    );
+
+  }
+
+
+  // DISPLAY CART ITEMS
+  items.forEach(item => {
+
+    const product =
+      availableProducts[item.id];
+
+
+    const available =
+      Boolean(product);
+
+
+    if (!available) {
+
+      hasUnavailableItem =
+        true;
+
+    }
+
+
+    const price =
+      available
+        ? Number(product.price)
+        : Number(item.price);
+
+
+    const quantity =
+      Number(item.qty);
+
+
+    const subtotal =
+      price * quantity;
+
+
+    if (available) {
+
+      total +=
+        subtotal;
+
+      itemCount +=
+        quantity;
+
+    }
+
+
+    const card =
+      document.createElement(
+        'article'
+      );
+
+
+    card.className =
+      'rounded-xl border border-gray-700 bg-gray-800 p-5';
+
+
+    card.innerHTML = `
+
+      <div class="flex flex-col justify-between gap-5 sm:flex-row sm:items-center">
+
+        <div>
+
+          <h3 class="text-lg font-semibold">
+            ${item.name}
+          </h3>
+
+
+          <p class="mt-1 text-blue-400">
+            ${money(price)}
+          </p>
+
+
+          ${
+            available
+              ? `
+                <p class="mt-1 text-xs text-gray-400">
+                  ${product.stock} currently in stock
+                </p>
+              `
+              : `
+                <p class="mt-1 text-sm font-semibold text-red-400">
+                  Currently unavailable
+                </p>
+              `
+          }
+
+        </div>
+
+
+        <div class="flex flex-wrap items-center gap-3">
+
+
+          <!-- QUANTITY -->
+          <div class="flex items-center rounded border border-gray-700">
+
+            <button
+              class="px-3 py-2 hover:bg-gray-700 disabled:opacity-50"
+              onclick="changeQuantity(${item.id}, -1)"
+              ${available ? '' : 'disabled'}
+            >
+              −
+            </button>
+
+
+            <span class="min-w-10 px-3 text-center">
+              ${quantity}
+            </span>
+
+
+            <button
+              class="px-3 py-2 hover:bg-gray-700 disabled:opacity-50"
+              onclick="changeQuantity(${item.id}, 1)"
+              ${available ? '' : 'disabled'}
+            >
+              +
+            </button>
+
+          </div>
+
+
+          <!-- SUBTOTAL -->
+          <div class="min-w-24 text-right font-semibold">
+
+            ${
+              available
+                ? money(subtotal)
+                : 'Unavailable'
+            }
+
+          </div>
+
+
+          <!-- REMOVE -->
+          <button
+            class="rounded bg-red-600 px-3 py-2 text-sm hover:bg-red-500"
+            onclick="removeItem(${item.id})"
+          >
+            Remove
+          </button>
+
+        </div>
+
+      </div>
+
+    `;
+
+
+    root.appendChild(
+      card
+    );
+
+  });
+
+
+  // CART COUNT
+  document
+    .getElementById(
+      'cart-count'
+    )
+    .textContent =
+    itemCount;
+
+
+  // SUMMARY ITEMS
+  document
+    .getElementById(
+      'summary-items'
+    )
+    .textContent =
+    itemCount;
+
+
+  // SUMMARY TOTAL
+  document
+    .getElementById(
+      'summary-total'
+    )
+    .textContent =
+    money(total);
+
+
+  // DISABLE CHECKOUT IF NEEDED
+  checkoutButton.disabled =
+    items.length === 0 ||
+    hasUnavailableItem;
+
+}
+
+
+// ==========================
+// CHECKOUT
+// ==========================
+
+document
+  .getElementById('checkout-btn')
+  .addEventListener(
+    'click',
+    async () => {
+
+      const checkoutButton =
+        document.getElementById(
+          'checkout-btn'
+        );
+
+
+      const errorEl =
+        document.getElementById(
+          'checkout-error'
+        );
+
+
+      errorEl.classList.add(
+        'hidden'
+      );
+
+
+      try {
+
+        const cart =
+          getCart();
+
+
+        const items =
+          Object.values(cart)
+            .map(item => ({
+
+              id:
+                Number(item.id),
+
+              qty:
+                Number(item.qty)
+
+            }));
+
+
+        if (items.length === 0) {
+
+          throw new Error(
+            'Your cart is empty.'
+          );
+
+        }
+
+
+        checkoutButton.disabled =
+          true;
+
+
+        checkoutButton.textContent =
+          'Processing...';
+
+
+        // SEND ORDER TO DATABASE
+        const response =
+          await fetch(
+            API + 'orders/checkout.php',
+            {
+
+              method: 'POST',
+
+              headers: {
+                'Content-Type':
+                  'application/json'
+              },
+
+              credentials:
+                'include',
+
+              body:
+                JSON.stringify({
+                  items: items
+                })
+
+            }
+          );
+
+
+        const data =
+          await response.json();
+
+
+        if (!data.ok) {
+
+          throw new Error(
+            data.error ||
+            'Checkout failed.'
+          );
+
+        }
+
+
+        // CLEAR CART
+        localStorage.removeItem(
+          KEY
+        );
+
+
+        // GO TO CONFIRMATION
+        window.location.href =
+          'OrderConfirmationPage.html?order_id=' +
+          encodeURIComponent(
+            data.order.id
+          );
+
+
+      } catch (error) {
+
+        errorEl.textContent =
+          error.message;
+
+
+        errorEl.classList.remove(
+          'hidden'
+        );
+
+
+        checkoutButton.disabled =
+          false;
+
+
+        checkoutButton.textContent =
+          'Checkout';
+
+      }
+
+    }
+  );
+
+
+// ==========================
+// LOGOUT
+// ==========================
+
+document
+  .getElementById('logout-btn')
+  .addEventListener(
+    'click',
+    async () => {
+
+      try {
+
+        await fetch(
+          API + 'auth/logout.php',
+          {
+            method: 'POST',
+            credentials: 'include'
+          }
+        );
+
+      } finally {
+
+        window.location.href =
+          'LoginPage.html';
+
+      }
+
+    }
+  );
+
+
+// ==========================
+// START PAGE
+// ==========================
+
+async function start() {
+
+  const isCustomer =
+    await checkCustomer();
+
+
+  if (!isCustomer) {
+
+    return;
+
+  }
+
+
+  await loadProducts();
+
+}
+
+
+start();
+
+</script>
+
+</body>
+
+</html>

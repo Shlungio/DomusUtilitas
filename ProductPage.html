@@ -1,0 +1,824 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+
+  <title>DomusUtilitas | Products</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+
+<body class="min-h-screen bg-gray-900 text-gray-100">
+
+  <!-- =========================
+       HEADER
+  ========================== -->
+  <header class="sticky top-0 z-10 border-b border-gray-800 bg-gray-950/95">
+
+    <div class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-5 py-3">
+
+
+      <!-- LOGO -->
+      <a
+        href="ProductPage.html"
+        class="flex items-center gap-3"
+      >
+
+        <img
+          src="logo.png"
+          class="h-11 w-11 rounded-full"
+          alt="DomusUtilitas"
+        >
+
+        <b>DomusUtilitas</b>
+
+      </a>
+
+
+      <!-- NAVIGATION -->
+      <div class="flex flex-wrap items-center gap-4">
+
+        <nav class="flex items-center gap-4 text-sm">
+
+		  <a
+			href="HomePage.html"
+			class="hover:text-blue-400"
+		  >
+			Home
+		  </a>
+		
+          <a
+            href="ProductPage.html"
+            class="font-semibold text-blue-400"
+          >
+            Products
+          </a>
+
+
+          <a
+            href="OrderHistoryPage.html"
+            class="hover:text-blue-400"
+          >
+            Orders
+          </a>
+
+
+          <a
+            href="CartPage.html"
+            class="rounded bg-blue-600 px-3 py-1 hover:bg-blue-500"
+          >
+            Cart
+            <span id="cart-count">0</span>
+          </a>
+
+        </nav>
+
+
+        <!-- CURRENT USER -->
+        <span
+          id="customer-name"
+          class="border-l border-gray-700 pl-4 text-sm text-gray-400"
+        ></span>
+
+
+        <!-- LOGOUT -->
+        <button
+          id="logout-btn"
+          class="rounded bg-red-600 px-3 py-1 text-sm hover:bg-red-500"
+        >
+          Logout
+        </button>
+
+      </div>
+
+    </div>
+
+  </header>
+
+
+  <!-- =========================
+       MAIN CONTENT
+  ========================== -->
+  <main class="mx-auto max-w-7xl px-5 py-10">
+
+
+    <!-- TITLE -->
+    <div class="mb-8 text-center">
+
+      <h1 class="text-3xl font-bold">
+        Product Catalog
+      </h1>
+
+      <p class="mt-2 text-gray-400">
+        Browse our available DomusUtilitas products.
+      </p>
+
+
+      <!-- SEARCH -->
+      <input
+        id="search"
+        type="search"
+        class="mt-6 w-full max-w-xl rounded border border-gray-700 bg-gray-800 px-4 py-3 outline-none focus:border-blue-500"
+        placeholder="Search products, categories, or subcategories"
+      >
+
+    </div>
+
+
+    <!-- STATUS -->
+    <p
+      id="status"
+      class="text-center text-gray-400"
+    >
+      Loading catalog...
+    </p>
+
+
+    <!-- CATALOG -->
+    <div
+      id="catalog"
+      class="space-y-12"
+    ></div>
+
+  </main>
+
+
+  <!-- =========================
+       ADD TO CART TOAST
+  ========================== -->
+  <div
+    id="toast"
+    class="fixed bottom-5 right-5 hidden rounded bg-emerald-600 px-4 py-3 shadow"
+  >
+    Added to cart.
+  </div>
+
+
+<script>
+
+const API = 'DomusUtilitas_api/';
+const KEY = 'du_cart_v1';
+
+let products = [];
+
+
+// ==========================
+// CHECK CUSTOMER SESSION
+// ==========================
+
+async function checkCustomer() {
+
+  try {
+
+    const response = await fetch(
+      API + 'auth/session.php',
+      {
+        credentials: 'include'
+      }
+    );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !data.ok ||
+      !data.logged_in ||
+      data.user.role !== 'customer'
+    ) {
+
+      window.location.href =
+        'LoginPage.html';
+
+      return false;
+
+    }
+
+
+    document
+      .getElementById('customer-name')
+      .textContent =
+      data.user.username;
+
+
+    return true;
+
+
+  } catch (error) {
+
+    window.location.href =
+      'LoginPage.html';
+
+    return false;
+
+  }
+
+}
+
+
+// ==========================
+// FORMAT MONEY
+// ==========================
+
+function money(value) {
+
+  return '₱' + Number(value).toLocaleString(
+    'en-PH',
+    {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }
+  );
+
+}
+
+
+// ==========================
+// GET CART
+// ==========================
+
+function cart() {
+
+  try {
+
+    return JSON.parse(
+      localStorage.getItem(KEY)
+    ) || {};
+
+  } catch {
+
+    return {};
+
+  }
+
+}
+
+
+// ==========================
+// SAVE CART
+// ==========================
+
+function save(cartData) {
+
+  localStorage.setItem(
+    KEY,
+    JSON.stringify(cartData)
+  );
+
+  updateCount();
+
+}
+
+
+// ==========================
+// UPDATE CART COUNT
+// ==========================
+
+function updateCount() {
+
+  const cartData =
+    cart();
+
+
+  const count =
+    Object.values(cartData)
+      .reduce(
+        (total, item) =>
+          total + Number(item.qty || 0),
+        0
+      );
+
+
+  document
+    .getElementById('cart-count')
+    .textContent =
+    count;
+
+}
+
+
+// ==========================
+// ADD TO CART
+// ==========================
+
+function add(product) {
+
+  const cartData =
+    cart();
+
+
+  const currentQuantity =
+    cartData[product.id]?.qty || 0;
+
+
+  if (
+    currentQuantity >=
+    Number(product.stock)
+  ) {
+
+    alert(
+      'Only ' +
+      product.stock +
+      ' available in stock.'
+    );
+
+    return;
+
+  }
+
+
+  cartData[product.id] = {
+
+    id: product.id,
+    name: product.name,
+    price: Number(product.price),
+    qty: currentQuantity + 1
+
+  };
+
+
+  save(cartData);
+
+
+  const toast =
+    document.getElementById('toast');
+
+
+  toast.classList.remove(
+    'hidden'
+  );
+
+
+  setTimeout(
+    () => {
+
+      toast.classList.add(
+        'hidden'
+      );
+
+    },
+    1500
+  );
+
+}
+
+
+// ==========================
+// CREATE ELEMENT
+// ==========================
+
+function createElement(
+  tag,
+  className,
+  text
+) {
+
+  const element =
+    document.createElement(tag);
+
+
+  if (className) {
+
+    element.className =
+      className;
+
+  }
+
+
+  if (text !== undefined) {
+
+    element.textContent =
+      text;
+
+  }
+
+
+  return element;
+
+}
+
+
+// ==========================
+// RENDER PRODUCTS
+// ==========================
+
+function render() {
+
+  const searchValue =
+    document
+      .getElementById('search')
+      .value
+      .trim()
+      .toLowerCase();
+
+
+  const catalog =
+    document.getElementById(
+      'catalog'
+    );
+
+
+  const status =
+    document.getElementById(
+      'status'
+    );
+
+
+  catalog.replaceChildren();
+
+
+  let shownProducts = 0;
+
+  const groups = {};
+
+
+  // FILTER AND GROUP PRODUCTS
+  products.forEach(product => {
+
+    const searchableText = [
+
+      product.name,
+      product.category_name,
+      product.subcategory_name
+
+    ]
+      .join(' ')
+      .toLowerCase();
+
+
+    const matchesSearch =
+      !searchValue ||
+      searchableText.includes(
+        searchValue
+      );
+
+
+    if (!matchesSearch) {
+
+      return;
+
+    }
+
+
+    shownProducts++;
+
+
+    if (
+      !groups[
+        product.category_name
+      ]
+    ) {
+
+      groups[
+        product.category_name
+      ] = {};
+
+    }
+
+
+    if (
+      !groups[
+        product.category_name
+      ][
+        product.subcategory_name
+      ]
+    ) {
+
+      groups[
+        product.category_name
+      ][
+        product.subcategory_name
+      ] = [];
+
+    }
+
+
+    groups[
+      product.category_name
+    ][
+      product.subcategory_name
+    ].push(product);
+
+  });
+
+
+  // NO PRODUCTS
+  if (shownProducts === 0) {
+
+    status.textContent =
+      searchValue
+        ? 'No products match your search.'
+        : 'No products are currently available.';
+
+    return;
+
+  }
+
+
+  status.textContent = '';
+
+
+  // DISPLAY CATEGORIES
+  Object.entries(groups).forEach(
+    ([categoryName, subcategories]) => {
+
+      const section =
+        createElement(
+          'section'
+        );
+
+
+      section.append(
+        createElement(
+          'h2',
+          'mb-6 text-2xl font-bold text-blue-300',
+          categoryName
+        )
+      );
+
+
+      // DISPLAY SUBCATEGORIES
+      Object.entries(
+        subcategories
+      ).forEach(
+        ([subcategoryName, items]) => {
+
+          const block =
+            createElement(
+              'div',
+              'mb-8'
+            );
+
+
+          block.append(
+            createElement(
+              'h3',
+              'mb-4 text-lg font-semibold',
+              subcategoryName
+            )
+          );
+
+
+          const grid =
+            createElement(
+              'div',
+              'grid gap-5 sm:grid-cols-2 lg:grid-cols-5'
+            );
+
+
+          // DISPLAY PRODUCTS
+          items.forEach(product => {
+
+            const card =
+              createElement(
+                'article',
+                'flex flex-col rounded-xl border border-gray-700 bg-gray-800 p-4 shadow'
+              );
+
+
+            // IMAGE
+            const image =
+              createElement(
+                'img',
+                'mb-4 h-32 w-full rounded object-cover'
+              );
+
+
+            image.src =
+              product.image_url ||
+              'https://placehold.co/600x400/1f2937/ffffff?text=Product';
+
+
+            image.alt =
+              product.name;
+
+
+            // NAME
+            const name =
+              createElement(
+                'h4',
+                'font-semibold',
+                product.name
+              );
+
+
+            // PRICE
+            const price =
+              createElement(
+                'p',
+                'mt-2 text-blue-400',
+                money(product.price)
+              );
+
+
+            // STOCK
+            const stock =
+              createElement(
+                'p',
+                'mb-3 text-sm text-gray-400',
+                'Stock: ' +
+                product.stock
+              );
+
+
+            // BUTTON
+            const button =
+              createElement(
+                'button',
+                'mt-auto rounded bg-blue-600 px-3 py-2 text-sm hover:bg-blue-500',
+                Number(product.stock) > 0
+                  ? 'Add to cart'
+                  : 'Out of stock'
+              );
+
+
+            button.disabled =
+              Number(product.stock) < 1;
+
+
+            button.classList.toggle(
+              'cursor-not-allowed',
+              button.disabled
+            );
+
+
+            button.classList.toggle(
+              'opacity-50',
+              button.disabled
+            );
+
+
+            button.onclick =
+              () => add(product);
+
+
+            card.append(
+              image,
+              name,
+              price,
+              stock,
+              button
+            );
+
+
+            grid.appendChild(
+              card
+            );
+
+          });
+
+
+          block.appendChild(
+            grid
+          );
+
+
+          section.appendChild(
+            block
+          );
+
+        }
+      );
+
+
+      catalog.appendChild(
+        section
+      );
+
+    }
+  );
+
+}
+
+
+// ==========================
+// LOAD PRODUCTS
+// ==========================
+
+async function loadProducts() {
+
+  try {
+
+    const response = await fetch(
+      API + 'products.php'
+    );
+
+
+    const data =
+      await response.json();
+
+
+    if (!data.ok) {
+
+      throw new Error(
+        data.error ||
+        'Unable to load products.'
+      );
+
+    }
+
+
+    products =
+      data.products;
+
+
+    render();
+
+
+  } catch (error) {
+
+    console.error(error);
+
+
+    document
+      .getElementById('status')
+      .textContent =
+      'Unable to load the catalog. Make sure Apache, PHP, and MySQL are running.';
+
+  }
+
+}
+
+
+// ==========================
+// SEARCH
+// ==========================
+
+document
+  .getElementById('search')
+  .addEventListener(
+    'input',
+    render
+  );
+
+
+// ==========================
+// LOGOUT
+// ==========================
+
+document
+  .getElementById('logout-btn')
+  .addEventListener(
+    'click',
+    async () => {
+
+      try {
+
+        await fetch(
+          API + 'auth/logout.php',
+          {
+            method: 'POST',
+            credentials: 'include'
+          }
+        );
+
+      } finally {
+
+        window.location.href =
+          'LoginPage.html';
+
+      }
+
+    }
+  );
+
+
+// ==========================
+// START PAGE
+// ==========================
+
+async function start() {
+
+  const isCustomer =
+    await checkCustomer();
+
+
+  if (!isCustomer) {
+
+    return;
+
+  }
+
+
+  updateCount();
+
+  await loadProducts();
+
+}
+
+
+start();
+
+</script>
+
+</body>
+
+</html>

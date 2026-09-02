@@ -1,0 +1,1254 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>DomusUtilitas | Admin Products</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="min-h-screen bg-gray-900 text-gray-100">
+
+  <!-- HEADER -->
+  <header class="border-b border-gray-800 bg-gray-950">
+
+    <div class="mx-auto flex max-w-7xl items-center justify-between px-5 py-4">
+
+      <div>
+        <h1 class="text-xl font-bold">DomusUtilitas</h1>
+        <p class="text-xs text-gray-400">Admin Panel</p>
+      </div>
+
+      <div class="flex items-center gap-4">
+
+        <span
+          id="admin-name"
+          class="text-sm text-gray-400">
+        </span>
+
+        <button
+          id="logout-btn"
+          class="rounded bg-red-600 px-4 py-2 text-sm hover:bg-red-500">
+          Logout
+        </button>
+
+      </div>
+
+    </div>
+
+  </header>
+
+<!-- ADMIN NAVIGATION -->
+<div class="border-b border-gray-800 bg-gray-950/70">
+
+  <nav class="mx-auto flex max-w-7xl gap-5 px-5 py-3 text-sm">
+
+	<a
+	  href="HomePage.html"
+	  class="hover:text-blue-400"
+	>
+	  Home
+	</a>
+
+    <a
+      href="AdminProducts.html"
+      class="font-semibold text-blue-400"
+    >
+      Products
+    </a>
+
+    <a
+      href="AdminOrders.html"
+      class="text-gray-300 hover:text-blue-400"
+    >
+      Orders
+    </a>
+
+  </nav>
+
+</div>
+
+  <!-- MAIN -->
+  <main class="mx-auto max-w-7xl px-5 py-10">
+
+    <div class="mb-8 flex flex-wrap items-center justify-between gap-4">
+
+      <div>
+
+        <h2 class="text-3xl font-bold">
+          Product Management
+        </h2>
+
+        <p class="mt-1 text-gray-400">
+          View and manage DomusUtilitas inventory.
+        </p>
+
+      </div>
+
+      <button
+        id="add-product-btn"
+        class="rounded bg-blue-600 px-5 py-2 font-semibold hover:bg-blue-500">
+        + Add Product
+      </button>
+
+    </div>
+
+
+    <!-- PRODUCT TABLE -->
+    <div class="overflow-x-auto rounded-xl border border-gray-700 bg-gray-800">
+
+      <table class="w-full text-left">
+
+        <thead class="border-b border-gray-700 bg-gray-950 text-sm text-gray-300">
+
+          <tr>
+            <th class="px-4 py-3">ID</th>
+            <th class="px-4 py-3">Product</th>
+            <th class="px-4 py-3">Category</th>
+            <th class="px-4 py-3">Subcategory</th>
+            <th class="px-4 py-3">Price</th>
+            <th class="px-4 py-3">Stock</th>
+            <th class="px-4 py-3">Status</th>
+            <th class="px-4 py-3">Actions</th>
+          </tr>
+
+        </thead>
+
+        <tbody id="product-table-body">
+        </tbody>
+
+      </table>
+
+    </div>
+
+
+    <p
+      id="status"
+      class="mt-6 text-center text-gray-400">
+      Loading products...
+    </p>
+
+  </main>
+
+
+  <!-- ADD / EDIT PRODUCT MODAL -->
+  <div
+    id="product-modal"
+    class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70 px-4">
+
+    <div class="w-full max-w-lg rounded-xl border border-gray-700 bg-gray-800 p-6">
+
+      <div class="mb-6 flex items-center justify-between">
+
+        <h2
+          id="modal-title"
+          class="text-2xl font-bold">
+          Add Product
+        </h2>
+
+        <button
+          id="close-modal-btn"
+          type="button"
+          class="text-2xl text-gray-400 hover:text-white">
+          &times;
+        </button>
+
+      </div>
+
+
+      <form
+        id="product-form"
+        class="space-y-4">
+
+
+        <!-- PRODUCT NAME -->
+        <div>
+
+          <label
+            for="product-name"
+            class="mb-1 block text-sm text-gray-300">
+            Product Name
+          </label>
+
+          <input
+            id="product-name"
+            type="text"
+            required
+            maxlength="150"
+            class="w-full rounded border border-gray-700 bg-gray-900 px-3 py-2 outline-none focus:border-blue-500">
+
+        </div>
+
+
+        <!-- CATEGORY -->
+        <div>
+
+          <label
+            for="product-category"
+            class="mb-1 block text-sm text-gray-300">
+            Category
+          </label>
+
+          <select
+            id="product-category"
+            required
+            class="w-full rounded border border-gray-700 bg-gray-900 px-3 py-2">
+
+            <option value="">
+              Select category
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <!-- SUBCATEGORY -->
+        <div>
+
+          <label
+            for="product-subcategory"
+            class="mb-1 block text-sm text-gray-300">
+            Subcategory
+          </label>
+
+          <select
+            id="product-subcategory"
+            required
+            disabled
+            class="w-full rounded border border-gray-700 bg-gray-900 px-3 py-2 disabled:opacity-50">
+
+            <option value="">
+              Select subcategory
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <!-- PRICE -->
+        <div>
+
+          <label
+            for="product-price"
+            class="mb-1 block text-sm text-gray-300">
+            Price
+          </label>
+
+          <input
+            id="product-price"
+            type="number"
+            min="0"
+            step="0.01"
+            required
+            class="w-full rounded border border-gray-700 bg-gray-900 px-3 py-2">
+
+        </div>
+
+
+        <!-- STOCK -->
+        <div>
+
+          <label
+            for="product-stock"
+            class="mb-1 block text-sm text-gray-300">
+            Stock
+          </label>
+
+          <input
+            id="product-stock"
+            type="number"
+            min="0"
+            step="1"
+            required
+            class="w-full rounded border border-gray-700 bg-gray-900 px-3 py-2">
+
+        </div>
+
+
+        <!-- IMAGE -->
+        <div>
+
+          <label
+            for="product-image"
+            class="mb-1 block text-sm text-gray-300">
+            Image URL
+          </label>
+
+          <input
+            id="product-image"
+            type="text"
+            maxlength="500"
+            placeholder="Optional"
+            class="w-full rounded border border-gray-700 bg-gray-900 px-3 py-2">
+
+        </div>
+
+
+        <!-- ERROR -->
+        <p
+          id="product-form-error"
+          class="hidden text-sm text-red-400">
+        </p>
+
+
+        <!-- BUTTONS -->
+        <div class="flex justify-end gap-3 pt-2">
+
+          <button
+            id="cancel-product-btn"
+            type="button"
+            class="rounded bg-gray-700 px-4 py-2 hover:bg-gray-600">
+            Cancel
+          </button>
+
+          <button
+            id="save-product-btn"
+            type="submit"
+            class="rounded bg-blue-600 px-4 py-2 font-semibold hover:bg-blue-500">
+            Add Product
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+
+
+<script>
+
+const API = 'DomusUtilitas_api/';
+
+const tableBody =
+  document.getElementById('product-table-body');
+
+const statusEl =
+  document.getElementById('status');
+
+const modal =
+  document.getElementById('product-modal');
+
+const productForm =
+  document.getElementById('product-form');
+
+const categorySelect =
+  document.getElementById('product-category');
+
+const subcategorySelect =
+  document.getElementById('product-subcategory');
+
+const formError =
+  document.getElementById('product-form-error');
+
+const saveButton =
+  document.getElementById('save-product-btn');
+
+const modalTitle =
+  document.getElementById('modal-title');
+
+
+let productOptions = [];
+
+let products = [];
+
+// null = adding product
+// number = editing existing product
+let editingProductId = null;
+
+
+
+// ========================================
+// FORMAT MONEY
+// ========================================
+
+function money(value) {
+
+  return '₱' + Number(value).toLocaleString(
+    'en-PH',
+    {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }
+  );
+
+}
+
+
+
+// ========================================
+// CHECK ADMIN
+// ========================================
+
+async function checkAdmin() {
+
+  try {
+
+    const response = await fetch(
+      API + 'auth/session.php',
+      {
+        credentials: 'include'
+      }
+    );
+
+    const data = await response.json();
+
+
+    if (
+      !data.ok ||
+      !data.logged_in ||
+      data.user.role !== 'admin'
+    ) {
+
+      window.location.href =
+        'LoginPage.html';
+
+      return false;
+
+    }
+
+
+    document
+      .getElementById('admin-name')
+      .textContent =
+      'Logged in as ' + data.user.username;
+
+
+    return true;
+
+
+  } catch (error) {
+
+    window.location.href =
+      'LoginPage.html';
+
+    return false;
+
+  }
+
+}
+
+
+
+// ========================================
+// LOAD PRODUCTS
+// ========================================
+
+async function loadProducts() {
+
+  statusEl.textContent =
+    'Loading products...';
+
+
+  try {
+
+    const response = await fetch(
+      API + 'admin/products.php',
+      {
+        credentials: 'include'
+      }
+    );
+
+
+    const data =
+      await response.json();
+
+
+    if (!data.ok) {
+
+      throw new Error(
+        data.error ||
+        'Unable to load products.'
+      );
+
+    }
+
+
+    products = data.products;
+
+    renderProducts(products);
+
+
+  } catch (error) {
+
+    statusEl.textContent =
+      error.message;
+
+  }
+
+}
+
+
+
+// ========================================
+// RENDER PRODUCTS
+// ========================================
+
+function renderProducts(productList) {
+
+  tableBody.replaceChildren();
+
+
+  if (productList.length === 0) {
+
+    statusEl.textContent =
+      'No products found.';
+
+    return;
+
+  }
+
+
+  statusEl.textContent = '';
+
+
+  productList.forEach(product => {
+
+    const row =
+      document.createElement('tr');
+
+
+    row.className =
+      'border-b border-gray-700 last:border-b-0 hover:bg-gray-700/40';
+
+
+    const active =
+      Number(product.is_active) === 1;
+
+
+    row.innerHTML = `
+
+      <td class="px-4 py-4">
+        ${product.id}
+      </td>
+
+      <td class="px-4 py-4 font-semibold">
+        ${product.name}
+      </td>
+
+      <td class="px-4 py-4">
+        ${product.category_name}
+      </td>
+
+      <td class="px-4 py-4">
+        ${product.subcategory_name}
+      </td>
+
+      <td class="px-4 py-4">
+        ${money(product.price)}
+      </td>
+
+      <td class="px-4 py-4">
+        ${product.stock}
+      </td>
+
+      <td class="px-4 py-4">
+
+        <span
+          class="
+            rounded px-2 py-1 text-xs font-semibold
+            ${
+              active
+                ? 'bg-green-900 text-green-300'
+                : 'bg-gray-700 text-gray-300'
+            }
+          ">
+
+          ${
+            active
+              ? 'Active'
+              : 'Inactive'
+          }
+
+        </span>
+
+      </td>
+
+
+      <td class="px-4 py-4">
+
+        <div class="flex gap-2">
+
+          <button
+            class="rounded bg-blue-600 px-3 py-1 text-sm hover:bg-blue-500"
+            onclick="editProduct(${product.id})">
+            Edit
+          </button>
+
+
+          <button
+            class="
+              rounded px-3 py-1 text-sm
+              ${
+                active
+                  ? 'bg-red-600 hover:bg-red-500'
+                  : 'bg-green-600 hover:bg-green-500'
+              }
+            "
+            onclick="toggleProduct(${product.id}, ${active})">
+
+            ${
+              active
+                ? 'Deactivate'
+                : 'Activate'
+            }
+
+          </button>
+
+        </div>
+
+      </td>
+
+    `;
+
+
+    tableBody.appendChild(row);
+
+  });
+
+}
+
+
+
+// ========================================
+// LOAD CATEGORIES / SUBCATEGORIES
+// ========================================
+
+async function loadProductOptions() {
+
+  try {
+
+    const response = await fetch(
+      API + 'admin/product_options.php',
+      {
+        credentials: 'include'
+      }
+    );
+
+
+    const data =
+      await response.json();
+
+
+    if (!data.ok) {
+
+      throw new Error(
+        data.error ||
+        'Unable to load categories.'
+      );
+
+    }
+
+
+    productOptions =
+      data.categories;
+
+
+    categorySelect.innerHTML =
+      '<option value="">Select category</option>';
+
+
+    productOptions.forEach(category => {
+
+      const option =
+        document.createElement('option');
+
+
+      option.value =
+        category.id;
+
+      option.textContent =
+        category.name;
+
+
+      categorySelect.appendChild(
+        option
+      );
+
+    });
+
+
+  } catch (error) {
+
+    console.error(error);
+
+  }
+
+}
+
+
+
+// ========================================
+// LOAD SUBCATEGORIES FOR CATEGORY
+// ========================================
+
+function populateSubcategories(
+  categoryId,
+  selectedSubcategoryId = null
+) {
+
+  subcategorySelect.innerHTML =
+    '<option value="">Select subcategory</option>';
+
+
+  const category =
+    productOptions.find(
+      item =>
+        Number(item.id) ===
+        Number(categoryId)
+    );
+
+
+  if (!category) {
+
+    subcategorySelect.disabled =
+      true;
+
+    return;
+
+  }
+
+
+  category.subcategories.forEach(
+    subcategory => {
+
+      const option =
+        document.createElement('option');
+
+
+      option.value =
+        subcategory.id;
+
+      option.textContent =
+        subcategory.name;
+
+
+      if (
+        Number(subcategory.id) ===
+        Number(selectedSubcategoryId)
+      ) {
+
+        option.selected = true;
+
+      }
+
+
+      subcategorySelect.appendChild(
+        option
+      );
+
+    }
+  );
+
+
+  subcategorySelect.disabled =
+    false;
+
+}
+
+
+
+// ========================================
+// CATEGORY CHANGE
+// ========================================
+
+categorySelect.addEventListener(
+  'change',
+  function () {
+
+    populateSubcategories(
+      this.value
+    );
+
+  }
+);
+
+
+
+// ========================================
+// OPEN MODAL
+// ========================================
+
+function openModal() {
+
+  modal.classList.remove('hidden');
+
+  modal.classList.add('flex');
+
+}
+
+
+
+// ========================================
+// CLOSE MODAL
+// ========================================
+
+function closeProductModal() {
+
+  modal.classList.add('hidden');
+
+  modal.classList.remove('flex');
+
+
+  productForm.reset();
+
+
+  subcategorySelect.innerHTML =
+    '<option value="">Select subcategory</option>';
+
+
+  subcategorySelect.disabled =
+    true;
+
+
+  formError.classList.add('hidden');
+
+
+  editingProductId = null;
+
+}
+
+
+
+// ========================================
+// ADD PRODUCT BUTTON
+// ========================================
+
+document
+  .getElementById('add-product-btn')
+  .addEventListener(
+    'click',
+    () => {
+
+      editingProductId = null;
+
+
+      productForm.reset();
+
+
+      subcategorySelect.innerHTML =
+        '<option value="">Select subcategory</option>';
+
+      subcategorySelect.disabled =
+        true;
+
+
+      modalTitle.textContent =
+        'Add Product';
+
+      saveButton.textContent =
+        'Add Product';
+
+
+      formError.classList.add(
+        'hidden'
+      );
+
+
+      openModal();
+
+    }
+  );
+
+
+
+// ========================================
+// EDIT PRODUCT BUTTON
+// ========================================
+
+function editProduct(id) {
+
+  const product =
+    products.find(
+      item =>
+        Number(item.id) === Number(id)
+    );
+
+
+  if (!product) {
+
+    alert('Product not found.');
+
+    return;
+
+  }
+
+
+  editingProductId =
+    Number(product.id);
+
+
+  modalTitle.textContent =
+    'Edit Product';
+
+
+  saveButton.textContent =
+    'Save Changes';
+
+
+  document
+    .getElementById('product-name')
+    .value =
+    product.name;
+
+
+  document
+    .getElementById('product-price')
+    .value =
+    product.price;
+
+
+  document
+    .getElementById('product-stock')
+    .value =
+    product.stock;
+
+
+  document
+    .getElementById('product-image')
+    .value =
+    product.image_url || '';
+
+
+  categorySelect.value =
+    product.category_id;
+
+
+  populateSubcategories(
+    product.category_id,
+    product.subcategory_id
+  );
+
+
+  formError.classList.add(
+    'hidden'
+  );
+
+
+  openModal();
+
+}
+
+
+
+// ========================================
+// SUBMIT ADD / EDIT PRODUCT
+// ========================================
+
+productForm.addEventListener(
+  'submit',
+  async event => {
+
+    event.preventDefault();
+
+
+    formError.classList.add(
+      'hidden'
+    );
+
+
+    saveButton.disabled =
+      true;
+
+
+    if (editingProductId) {
+
+      saveButton.textContent =
+        'Saving...';
+
+    } else {
+
+      saveButton.textContent =
+        'Adding...';
+
+    }
+
+
+    try {
+
+      const productData = {
+
+        name:
+          document
+            .getElementById(
+              'product-name'
+            )
+            .value
+            .trim(),
+
+        subcategory_id:
+          Number(
+            subcategorySelect.value
+          ),
+
+        price:
+          document
+            .getElementById(
+              'product-price'
+            )
+            .value,
+
+        stock:
+          document
+            .getElementById(
+              'product-stock'
+            )
+            .value,
+
+        image_url:
+          document
+            .getElementById(
+              'product-image'
+            )
+            .value
+            .trim()
+
+      };
+
+
+      let endpoint;
+
+
+      if (editingProductId) {
+
+        endpoint =
+          'admin/edit_product.php';
+
+        productData.id =
+          editingProductId;
+
+      } else {
+
+        endpoint =
+          'admin/add_product.php';
+
+      }
+
+
+      const response = await fetch(
+        API + endpoint,
+        {
+
+          method: 'POST',
+
+          headers: {
+            'Content-Type':
+              'application/json'
+          },
+
+          credentials: 'include',
+
+          body: JSON.stringify(
+            productData
+          )
+
+        }
+      );
+
+
+      const data =
+        await response.json();
+
+
+      if (!data.ok) {
+
+        throw new Error(
+          data.error ||
+          'Unable to save product.'
+        );
+
+      }
+
+
+      closeProductModal();
+
+
+      await loadProducts();
+
+
+    } catch (error) {
+
+      formError.textContent =
+        error.message;
+
+
+      formError.classList.remove(
+        'hidden'
+      );
+
+
+    } finally {
+
+      saveButton.disabled =
+        false;
+
+
+      if (editingProductId) {
+
+        saveButton.textContent =
+          'Save Changes';
+
+      } else {
+
+        saveButton.textContent =
+          'Add Product';
+
+      }
+
+    }
+
+  }
+);
+
+
+
+// ========================================
+// CLOSE BUTTONS
+// ========================================
+
+document
+  .getElementById('close-modal-btn')
+  .addEventListener(
+    'click',
+    closeProductModal
+  );
+
+
+document
+  .getElementById('cancel-product-btn')
+  .addEventListener(
+    'click',
+    closeProductModal
+  );
+
+
+
+// ========================================
+// ACTIVATE / DEACTIVATE
+// NEXT FEATURE
+// ========================================
+
+async function toggleProduct(id, active) {
+
+  const action =
+    active ? 'deactivate' : 'activate';
+
+  const confirmed = confirm(
+    `Are you sure you want to ${action} this product?`
+  );
+
+  if (!confirmed) {
+    return;
+  }
+
+  try {
+
+    const response = await fetch(
+      API + 'admin/toggle_product.php',
+      {
+        method: 'POST',
+
+        headers: {
+          'Content-Type': 'application/json'
+        },
+
+        credentials: 'include',
+
+        body: JSON.stringify({
+          id: Number(id),
+          is_active: active ? 0 : 1
+        })
+      }
+    );
+
+    const data = await response.json();
+
+    if (!data.ok) {
+      throw new Error(
+        data.error ||
+        'Unable to update product status.'
+      );
+    }
+
+    // Refresh admin table
+    await loadProducts();
+
+  } catch (error) {
+
+    alert(error.message);
+
+  }
+
+}
+
+
+
+// ========================================
+// LOGOUT
+// ========================================
+
+document
+  .getElementById('logout-btn')
+  .addEventListener(
+    'click',
+    async () => {
+
+      try {
+
+        await fetch(
+          API + 'auth/logout.php',
+          {
+            method: 'POST',
+            credentials: 'include'
+          }
+        );
+
+      } finally {
+
+        window.location.href =
+          'LoginPage.html';
+
+      }
+
+    }
+  );
+
+
+
+// ========================================
+// START
+// ========================================
+
+async function start() {
+
+  const isAdmin =
+    await checkAdmin();
+
+
+  if (!isAdmin) {
+
+    return;
+
+  }
+
+
+  await loadProductOptions();
+
+  await loadProducts();
+
+}
+
+
+start();
+
+</script>
+
+</body>
+
+</html>

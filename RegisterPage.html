@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+
+  <title>DomusUtilitas | Register</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+
+<body class="min-h-screen bg-gray-900 text-gray-100">
+
+
+  <!-- =========================
+       HEADER
+  ========================== -->
+  <header class="border-b border-gray-800 bg-gray-950/95">
+
+    <div class="mx-auto flex max-w-7xl items-center justify-between px-5 py-3">
+
+
+      <!-- LOGO -->
+      <div class="flex items-center gap-3">
+
+        <img
+          src="logo.png"
+          class="h-11 w-11 rounded-full"
+          alt="DomusUtilitas"
+        >
+
+        <b>DomusUtilitas</b>
+
+      </div>
+
+
+      <!-- LOGIN LINK -->
+      <a
+        href="LoginPage.html"
+        class="text-sm text-blue-400 hover:underline"
+      >
+        Log In
+      </a>
+
+    </div>
+
+  </header>
+
+
+  <!-- =========================
+       MAIN
+  ========================== -->
+  <main class="mx-auto flex max-w-md flex-col px-5 py-16">
+
+
+    <h1 class="mb-1 text-center text-3xl font-bold">
+      Create an Account
+    </h1>
+
+
+    <p class="mb-8 text-center text-gray-400">
+      Sign up to start shopping with DomusUtilitas.
+    </p>
+
+
+    <!-- REGISTER FORM -->
+    <form
+      id="register-form"
+      class="flex flex-col gap-4 rounded-xl border border-gray-700 bg-gray-800 p-6"
+    >
+
+
+      <!-- USERNAME -->
+      <div>
+
+        <label
+          for="username"
+          class="mb-1 block text-sm text-gray-300"
+        >
+          Username
+        </label>
+
+
+        <input
+          id="username"
+          name="username"
+          type="text"
+          required
+          minlength="3"
+          maxlength="50"
+          autocomplete="username"
+          class="w-full rounded border border-gray-700 bg-gray-900 px-3 py-2 outline-none focus:border-blue-500"
+        >
+
+        <p class="mt-1 text-xs text-gray-500">
+          At least 3 characters.
+        </p>
+
+      </div>
+
+
+      <!-- PASSWORD -->
+      <div>
+
+        <label
+          for="password"
+          class="mb-1 block text-sm text-gray-300"
+        >
+          Password
+        </label>
+
+
+        <input
+          id="password"
+          name="password"
+          type="password"
+          required
+          minlength="6"
+          autocomplete="new-password"
+          class="w-full rounded border border-gray-700 bg-gray-900 px-3 py-2 outline-none focus:border-blue-500"
+        >
+
+
+        <p class="mt-1 text-xs text-gray-500">
+          At least 6 characters.
+        </p>
+
+      </div>
+
+
+      <!-- CONFIRM PASSWORD -->
+      <div>
+
+        <label
+          for="confirm_password"
+          class="mb-1 block text-sm text-gray-300"
+        >
+          Confirm Password
+        </label>
+
+
+        <input
+          id="confirm_password"
+          name="confirm_password"
+          type="password"
+          required
+          minlength="6"
+          autocomplete="new-password"
+          class="w-full rounded border border-gray-700 bg-gray-900 px-3 py-2 outline-none focus:border-blue-500"
+        >
+
+      </div>
+
+
+      <!-- ERROR -->
+      <p
+        id="error"
+        class="hidden text-sm text-red-400"
+      ></p>
+
+
+      <!-- REGISTER BUTTON -->
+      <button
+        type="submit"
+        id="submit-btn"
+        class="mt-2 rounded bg-blue-600 py-2 font-semibold hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
+      >
+        Register
+      </button>
+
+    </form>
+
+
+    <p class="mt-6 text-center text-sm text-gray-400">
+
+      Already have an account?
+
+      <a
+        href="LoginPage.html"
+        class="text-blue-400 hover:underline"
+      >
+        Log in here
+      </a>
+
+    </p>
+
+  </main>
+
+
+<script>
+
+const API = 'DomusUtilitas_api/';
+
+
+// ==========================
+// REDIRECT EXISTING USER
+// ==========================
+
+function redirectUser(user) {
+
+  if (user.role === 'admin') {
+
+    window.location.href =
+      'AdminProducts.html';
+
+  } else {
+
+    window.location.href =
+      'ProductPage.html';
+
+  }
+
+}
+
+
+// ==========================
+// CHECK EXISTING SESSION
+// ==========================
+
+async function checkExistingSession() {
+
+  try {
+
+    const response = await fetch(
+      API + 'auth/session.php',
+      {
+        credentials: 'include'
+      }
+    );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      data.ok &&
+      data.logged_in &&
+      data.user
+    ) {
+
+      redirectUser(
+        data.user
+      );
+
+    }
+
+
+  } catch (error) {
+
+    console.error(
+      'Unable to check session:',
+      error
+    );
+
+  }
+
+}
+
+
+// ==========================
+// REGISTER
+// ==========================
+
+document
+  .getElementById('register-form')
+  .addEventListener(
+    'submit',
+    async event => {
+
+      event.preventDefault();
+
+
+      const errorEl =
+        document.getElementById(
+          'error'
+        );
+
+
+      const button =
+        document.getElementById(
+          'submit-btn'
+        );
+
+
+      errorEl.classList.add(
+        'hidden'
+      );
+
+
+      const password =
+        document
+          .getElementById(
+            'password'
+          )
+          .value;
+
+
+      const confirmPassword =
+        document
+          .getElementById(
+            'confirm_password'
+          )
+          .value;
+
+
+      // CHECK PASSWORD MATCH
+      if (
+        password !==
+        confirmPassword
+      ) {
+
+        errorEl.textContent =
+          'Passwords do not match.';
+
+
+        errorEl.classList.remove(
+          'hidden'
+        );
+
+
+        return;
+
+      }
+
+
+      button.disabled =
+        true;
+
+
+      button.textContent =
+        'Creating account...';
+
+
+      try {
+
+        const response = await fetch(
+          API + 'auth/register.php',
+          {
+
+            method: 'POST',
+
+            headers: {
+              'Content-Type':
+                'application/json'
+            },
+
+            credentials: 'include',
+
+            body: JSON.stringify({
+
+              username:
+                document
+                  .getElementById(
+                    'username'
+                  )
+                  .value
+                  .trim(),
+
+              password:
+                password,
+
+              confirm_password:
+                confirmPassword
+
+            })
+
+          }
+        );
+
+
+        const data =
+          await response.json();
+
+
+        if (!data.ok) {
+
+          throw new Error(
+            data.error ||
+            'Registration failed.'
+          );
+
+        }
+
+
+        // Registration automatically
+        // logs the customer in.
+        window.location.href =
+          'ProductPage.html';
+
+
+      } catch (error) {
+
+        errorEl.textContent =
+          error.message;
+
+
+        errorEl.classList.remove(
+          'hidden'
+        );
+
+
+      } finally {
+
+        button.disabled =
+          false;
+
+
+        button.textContent =
+          'Register';
+
+      }
+
+    }
+  );
+
+
+// ==========================
+// START
+// ==========================
+
+checkExistingSession();
+
+</script>
+
+</body>
+
+</html>
