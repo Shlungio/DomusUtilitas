@@ -10,14 +10,18 @@ header('Content-Type: application/json');
 
 try {
     $stmt = $pdo->prepare(
-        'SELECT
-            p.id,
-            p.name,
-            p.price,
-            p.stock,
-            p.image_url,
-            c.name AS category_name,
-            s.name AS subcategory_name
+       'SELECT
+			p.id,
+			p.name,
+			p.brand,
+			p.model,
+			p.description,
+			p.specifications,
+			p.price,
+			p.stock,
+			p.image_url,
+			c.name AS category_name,
+			s.name AS subcategory_name
         FROM products p
         INNER JOIN subcategories s
             ON p.subcategory_id = s.id

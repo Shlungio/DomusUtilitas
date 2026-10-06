@@ -6,6 +6,7 @@ declare(strict_types=1);
 
 require __DIR__ . '/../auth/_helpers.php';
 require __DIR__ . '/../db.php';
+require __DIR__ . '/audit.php';
 
 require_role('admin');
 
@@ -19,6 +20,10 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $body = get_json_body();
 
 $name = trim($body['name'] ?? '');
+$brand = trim($body['brand'] ?? '');
+$model = trim($body['model'] ?? '');
+$description = trim($body['description'] ?? '');
+$specifications = trim($body['specifications'] ?? '');
 $subcategoryId = (int)($body['subcategory_id'] ?? 0);
 $price = $body['price'] ?? null;
 $stock = $body['stock'] ?? null;
@@ -62,6 +67,20 @@ if (strlen($name) > 150) {
     ], 400);
 }
 
+if (strlen($brand) > 100) {
+    json_out([
+        'ok' => false,
+        'error' => 'Brand is too long.'
+    ], 400);
+}
+
+if (strlen($model) > 150) {
+    json_out([
+        'ok' => false,
+        'error' => 'Model is too long.'
+    ], 400);
+}
+
 if (strlen($imageUrl) > 500) {
     json_out([
         'ok' => false,
@@ -69,44 +88,124 @@ if (strlen($imageUrl) > 500) {
     ], 400);
 }
 
+
 try {
 
-    // Make sure the selected subcategory actually exists.
-    $stmt = $pdo->prepare(
-        'SELECT id FROM subcategories WHERE id = ?'
-    );
-
-    $stmt->execute([$subcategoryId]);
-
-    if (!$stmt->fetch()) {
-        json_out([
-            'ok' => false,
-            'error' => 'Selected subcategory does not exist.'
-        ], 400);
-    }
+    // ========================================
+    // CHECK SUBCATEGORY EXISTS
+    // ========================================
 
     $stmt = $pdo->prepare(
-        'INSERT INTO products
-            (subcategory_id, name, price, stock, image_url, is_active)
-         VALUES
-            (?, ?, ?, ?, ?, 1)'
+        'SELECT id
+         FROM subcategories
+         WHERE id = ?'
     );
 
     $stmt->execute([
-        $subcategoryId,
-        $name,
-        (float)$price,
-        (int)$stock,
-        $imageUrl !== '' ? $imageUrl : null
+        $subcategoryId
     ]);
 
-    $productId = (int)$pdo->lastInsertId();
+
+    if (!$stmt->fetch()) {
+
+        json_out([
+            'ok' => false,
+            'error' =>
+                'Selected subcategory does not exist.'
+        ], 400);
+
+    }
+
+
+
+    // ========================================
+    // INSERT PRODUCT
+    // ========================================
+
+    $stmt = $pdo->prepare(
+        'INSERT INTO products
+        (
+            subcategory_id,
+            name,
+            brand,
+            model,
+            description,
+            specifications,
+            price,
+            stock,
+            image_url,
+            is_active
+        )
+        VALUES
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, 1)'
+    );
+
+
+    $stmt->execute([
+
+        $subcategoryId,
+
+        $name,
+
+        $brand !== ''
+            ? $brand
+            : null,
+
+        $model !== ''
+            ? $model
+            : null,
+
+        $description !== ''
+            ? $description
+            : null,
+
+        $specifications !== ''
+            ? $specifications
+            : null,
+
+        (float)$price,
+
+        (int)$stock,
+
+        $imageUrl !== ''
+            ? $imageUrl
+            : null
+
+    ]);
+
+
+
+    $productId =
+        (int)$pdo->lastInsertId();
+
+
+
+    // ========================================
+    // AUDIT LOG
+    // ========================================
+
+    write_audit(
+        $pdo,
+        'PRODUCT_CREATED',
+        'product',
+        $productId,
+        'Created product "' .
+        $name .
+        '" with initial stock of ' .
+        (int)$stock .
+        '.'
+    );
+
+
 
     json_out([
         'ok' => true,
-        'message' => 'Product added successfully.',
-        'product_id' => $productId
+        'message' =>
+            'Product added successfully.',
+        'product_id' =>
+            $productId
     ], 201);
+
 
 } catch (PDOException $e) {
 

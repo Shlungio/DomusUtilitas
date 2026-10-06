@@ -23,6 +23,10 @@ try {
         'SELECT
             p.id,
             p.name,
+			p.brand,
+			p.model,
+			p.description,
+			p.specifications,
             p.price,
             p.stock,
             p.image_url,

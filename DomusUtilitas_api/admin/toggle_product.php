@@ -6,6 +6,7 @@ declare(strict_types=1);
 
 require __DIR__ . '/../auth/_helpers.php';
 require __DIR__ . '/../db.php';
+require __DIR__ . '/audit.php';
 
 require_role('admin');
 
@@ -37,18 +38,34 @@ if ($isActive !== 0 && $isActive !== 1) {
 
 try {
 
-    // Check if the product exists
+    // ========================================
+    // CHECK PRODUCT EXISTS
+    // ========================================
+
     $stmt = $pdo->prepare(
-        'SELECT id FROM products WHERE id = ?'
+        'SELECT
+            id,
+            name,
+            is_active
+        FROM products
+        WHERE id = ?'
     );
 
-    $stmt->execute([$id]);
+    $stmt->execute([
+        $id
+    ]);
 
-    if (!$stmt->fetch()) {
+    $product =
+        $stmt->fetch();
+
+
+    if (!$product) {
+
         json_out([
             'ok' => false,
             'error' => 'Product not found.'
         ], 404);
+
     }
 
     // Update product status
@@ -62,6 +79,34 @@ try {
         $isActive,
         $id
     ]);
+
+    // ========================================
+    // AUDIT LOG
+    // ========================================
+
+    $action =
+        $isActive === 1
+            ? 'PRODUCT_ACTIVATED'
+            : 'PRODUCT_DEACTIVATED';
+
+
+    $details =
+        $isActive === 1
+            ? 'Activated product "' .
+            $product['name'] .
+            '".'
+            : 'Deactivated product "' .
+            $product['name'] .
+            '".';
+
+
+    write_audit(
+        $pdo,
+        $action,
+        'product',
+        $id,
+        $details
+    );
 
     json_out([
         'ok' => true,

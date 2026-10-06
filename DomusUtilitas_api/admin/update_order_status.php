@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 require __DIR__ . '/../auth/_helpers.php';
 require __DIR__ . '/../db.php';
+require __DIR__ . '/audit.php';
 
 require_role('admin');
 
@@ -177,25 +178,55 @@ try {
     }
 
 
-    // ==========================
-    // UPDATE ORDER STATUS
-    // ==========================
+        // ==========================
+        // UPDATE ORDER STATUS
+        // ==========================
 
-    $stmt = $pdo->prepare(
-        'UPDATE orders
-         SET status = ?
-         WHERE id = ?'
-    );
+        $stmt = $pdo->prepare(
+            'UPDATE orders
+            SET status = ?
+            WHERE id = ?'
+        );
 
-    $stmt->execute([
+        $stmt->execute([
         $newStatus,
         $orderId
     ]);
 
 
+    // ========================================
+    // AUDIT LOG
+    // ========================================
+
+    $details =
+        'Changed order #' .
+        $orderId .
+        ' status from ' .
+        $currentStatus .
+        ' to ' .
+        $newStatus .
+        '.';
+
+
+    if ($newStatus === 'Cancelled') {
+
+        $details .=
+            ' Product stock was restored.';
+
+    }
+
+
+    write_audit(
+        $pdo,
+        'ORDER_STATUS_CHANGED',
+        'order',
+        $orderId,
+        $details
+    );
+
+
     // Make all database changes permanent.
     $pdo->commit();
-
 
     json_out([
         'ok' => true,

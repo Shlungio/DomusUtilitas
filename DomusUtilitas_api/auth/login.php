@@ -20,13 +20,53 @@ if ($username === '' || $password === '') {
     json_out(['ok' => false, 'error' => 'Username and password are required.'], 400);
 }
 
-$stmt = $pdo->prepare('SELECT id, username, password_hash, role FROM users WHERE username = ?');
+$stmt = $pdo->prepare('SELECT
+    id,
+    username,
+    email,
+    password_hash,
+    role,
+    email_verified,
+    email_verification_required
+FROM users
+WHERE username = ?
+LIMIT 1');
 $stmt->execute([$username]);
 $user = $stmt->fetch();
 
 if (!$user || !password_verify($password, $user['password_hash'])) {
     // Same error for "no such user" and "wrong password" — don't leak which one it was.
     json_out(['ok' => false, 'error' => 'Invalid username or password.'], 401);
+}
+
+if (
+    $user['role'] === 'customer' &&
+    (int)$user['email_verification_required'] === 1 &&
+    (int)$user['email_verified'] === 0
+) {
+
+    session_regenerate_id(true);
+
+    unset(
+        $_SESSION['user_id'],
+        $_SESSION['username'],
+        $_SESSION['role']
+    );
+
+    $_SESSION['pending_verification_user_id'] =
+        (int)$user['id'];
+
+    $_SESSION['pending_verification_username'] =
+        $user['username'];
+
+    $_SESSION['pending_verification_email'] =
+        $user['email'];
+
+    json_out([
+        'ok' => true,
+        'verification_required' => true,
+        'redirect' => 'VerifyEmailPage.html'
+    ]);
 }
 
 session_regenerate_id(true); // prevent session fixation on login
