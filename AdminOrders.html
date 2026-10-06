@@ -9,7 +9,7 @@
     content="width=device-width, initial-scale=1"
   >
 
-  <title>DomusUtilitas | Admin Orders</title>
+  <title>Domus Utilitas | Admin Orders</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
@@ -25,7 +25,7 @@
       <div>
 
         <h1 class="text-xl font-bold">
-          DomusUtilitas
+          Domus Utilitas
         </h1>
 
         <p class="text-xs text-gray-400">
@@ -63,6 +63,20 @@
     <nav class="mx-auto flex max-w-7xl gap-5 px-5 py-3 text-sm">
 
       <a
+        href="HomePage.html"
+        class="hover:text-blue-400"
+      >
+        Home
+      </a>
+
+      <a
+        href="AdminDashboard.html"
+        class="text-gray-300 hover:text-blue-400"
+      >
+        Dashboard
+      </a>
+
+      <a
         href="AdminProducts.html"
         class="text-gray-300 hover:text-blue-400"
       >
@@ -74,6 +88,13 @@
         class="font-semibold text-blue-400"
       >
         Orders
+      </a>
+
+      <a
+        href="AdminAudit.html"
+        class="text-gray-300 hover:text-blue-400"
+      >
+        Audit Trail
       </a>
 
     </nav>
@@ -96,6 +117,119 @@
 
     </div>
 
+    <!-- =========================
+        ORDER SEARCH / FILTERS
+    ========================== -->
+    <div
+      class="mb-6 grid gap-3 rounded-xl border border-gray-700 bg-gray-800 p-4 md:grid-cols-3"
+    >
+
+      <!-- SEARCH -->
+      <div>
+
+        <label
+          for="order-search"
+          class="mb-1 block text-sm text-gray-400"
+        >
+          Search Orders
+        </label>
+
+        <input
+          id="order-search"
+          type="search"
+          placeholder="Order ID or customer..."
+          class="w-full rounded-lg border border-gray-700 bg-gray-900 px-4 py-2 outline-none focus:border-blue-500"
+        >
+
+      </div>
+
+
+      <!-- STATUS -->
+      <div>
+
+        <label
+          for="order-status-filter"
+          class="mb-1 block text-sm text-gray-400"
+        >
+          Status
+        </label>
+
+        <select
+          id="order-status-filter"
+          class="w-full rounded-lg border border-gray-700 bg-gray-900 px-4 py-2 outline-none focus:border-blue-500"
+        >
+
+          <option value="">
+            All Statuses
+          </option>
+
+          <option value="Pending">
+            Pending
+          </option>
+
+          <option value="Processing">
+            Processing
+          </option>
+
+          <option value="Shipped">
+            Shipped
+          </option>
+
+          <option value="Completed">
+            Completed
+          </option>
+
+          <option value="Cancelled">
+            Cancelled
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <!-- SORT -->
+      <div>
+
+        <label
+          for="order-sort"
+          class="mb-1 block text-sm text-gray-400"
+        >
+          Sort By
+        </label>
+
+        <select
+          id="order-sort"
+          class="w-full rounded-lg border border-gray-700 bg-gray-900 px-4 py-2 outline-none focus:border-blue-500"
+        >
+
+          <option value="newest">
+            Newest First
+          </option>
+
+          <option value="oldest">
+            Oldest First
+          </option>
+
+          <option value="highest">
+            Highest Total
+          </option>
+
+          <option value="lowest">
+            Lowest Total
+          </option>
+
+        </select>
+
+      </div>
+
+    </div>
+
+
+    <p
+      id="order-results-count"
+      class="mb-4 text-sm text-gray-400"
+    ></p>
 
     <p
       id="status"
@@ -117,6 +251,27 @@
 
 const API = 'DomusUtilitas_api/';
 
+let orders = [];
+
+const orderSearch =
+  document.getElementById(
+    'order-search'
+  );
+
+const orderStatusFilter =
+  document.getElementById(
+    'order-status-filter'
+  );
+
+const orderSort =
+  document.getElementById(
+    'order-sort'
+  );
+
+const orderResultsCount =
+  document.getElementById(
+    'order-results-count'
+  );
 
 // ==========================
 // MONEY
@@ -283,9 +438,10 @@ async function loadOrders() {
     }
 
 
-    renderOrders(
-      data.orders
-    );
+   orders =
+   data.orders || [];
+
+  applyOrderFilters();
 
 
   } catch (error) {
@@ -297,6 +453,178 @@ async function loadOrders() {
 
 }
 
+// ==========================
+// SEARCH / FILTER / SORT
+// ==========================
+
+function applyOrderFilters() {
+
+  const searchTerm =
+    orderSearch.value
+      .trim()
+      .toLowerCase();
+
+
+  const selectedStatus =
+    orderStatusFilter.value;
+
+
+  const selectedSort =
+    orderSort.value;
+
+
+  let filteredOrders =
+    orders.filter(order => {
+
+      // -------------------------
+      // SEARCH
+      // -------------------------
+
+      const productNames =
+        Array.isArray(order.items)
+          ? order.items
+              .map(item =>
+                item.product_name || ''
+              )
+              .join(' ')
+          : '';
+
+
+      const searchableText = [
+
+        order.id,
+
+        '#' + order.id,
+
+        order.username,
+
+        productNames
+
+      ]
+        .map(value =>
+          String(value || '')
+            .toLowerCase()
+        )
+        .join(' ');
+
+
+      const matchesSearch =
+        searchableText.includes(
+          searchTerm
+        );
+
+
+      // -------------------------
+      // STATUS FILTER
+      // -------------------------
+
+      const matchesStatus =
+        selectedStatus === '' ||
+        order.status ===
+          selectedStatus;
+
+
+      return (
+        matchesSearch &&
+        matchesStatus
+      );
+
+    });
+
+
+
+  // ==========================
+  // SORT
+  // ==========================
+
+  filteredOrders =
+    [...filteredOrders];
+
+
+  switch (selectedSort) {
+
+    case 'oldest':
+
+      filteredOrders.sort(
+        (a, b) =>
+          new Date(a.created_at) -
+          new Date(b.created_at)
+      );
+
+      break;
+
+
+    case 'highest':
+
+      filteredOrders.sort(
+        (a, b) =>
+          Number(b.total_amount) -
+          Number(a.total_amount)
+      );
+
+      break;
+
+
+    case 'lowest':
+
+      filteredOrders.sort(
+        (a, b) =>
+          Number(a.total_amount) -
+          Number(b.total_amount)
+      );
+
+      break;
+
+
+    case 'newest':
+    default:
+
+      filteredOrders.sort(
+        (a, b) =>
+          new Date(b.created_at) -
+          new Date(a.created_at)
+      );
+
+      break;
+
+  }
+
+
+
+  // ==========================
+  // RESULT COUNT
+  // ==========================
+
+  orderResultsCount.textContent =
+    `Showing ${filteredOrders.length} of ${orders.length} orders`;
+
+
+  renderOrders(
+    filteredOrders
+  );
+
+}
+
+// ==========================
+// FILTER EVENTS
+// ==========================
+
+orderSearch.addEventListener(
+  'input',
+  applyOrderFilters
+);
+
+
+orderStatusFilter.addEventListener(
+  'change',
+  applyOrderFilters
+);
+
+
+orderSort.addEventListener(
+  'change',
+  applyOrderFilters
+);
 
 // ==========================
 // RENDER ORDERS

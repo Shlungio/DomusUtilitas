@@ -1,0 +1,994 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+
+  <title>
+    Domus Utilitas | Audit Trail
+  </title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+
+
+<body class="min-h-screen bg-gray-900 text-gray-100">
+
+
+<!-- =========================
+     HEADER
+========================== -->
+
+<header
+  class="border-b border-gray-800 bg-gray-950"
+>
+
+  <div
+    class="mx-auto flex max-w-7xl items-center justify-between px-5 py-4"
+  >
+
+    <div>
+
+      <h1 class="text-xl font-bold">
+        Domus Utilitas
+      </h1>
+
+      <p class="text-xs text-gray-400">
+        Admin Panel
+      </p>
+
+    </div>
+
+
+    <div class="flex items-center gap-4">
+
+      <span
+        id="admin-name"
+        class="text-sm text-gray-400"
+      ></span>
+
+
+      <button
+        id="logout-btn"
+        class="rounded bg-red-600 px-4 py-2 text-sm hover:bg-red-500"
+      >
+        Logout
+      </button>
+
+    </div>
+
+  </div>
+
+</header>
+
+
+
+<!-- =========================
+     ADMIN NAVIGATION
+========================== -->
+
+<div
+  class="border-b border-gray-800 bg-gray-950/70"
+>
+
+  <nav
+    class="mx-auto flex max-w-7xl gap-5 px-5 py-3 text-sm"
+  >
+
+    <a
+      href="HomePage.html"
+      class="text-gray-300 hover:text-blue-400"
+    >
+      Home
+    </a>
+
+
+    <a
+      href="AdminDashboard.html"
+      class="text-gray-300 hover:text-blue-400"
+    >
+      Dashboard
+    </a>
+
+
+    <a
+      href="AdminProducts.html"
+      class="text-gray-300 hover:text-blue-400"
+    >
+      Products
+    </a>
+
+
+    <a
+      href="AdminOrders.html"
+      class="text-gray-300 hover:text-blue-400"
+    >
+      Orders
+    </a>
+
+
+    <a
+      href="AdminAudit.html"
+      class="font-semibold text-blue-400"
+    >
+      Audit Trail
+    </a>
+
+  </nav>
+
+</div>
+
+
+
+<!-- =========================
+     MAIN
+========================== -->
+
+<main
+  class="mx-auto max-w-7xl px-5 py-10"
+>
+
+
+  <!-- TITLE -->
+
+  <div class="mb-8">
+
+    <h2 class="text-3xl font-bold">
+      Audit Trail
+    </h2>
+
+    <p class="mt-2 text-gray-400">
+      Review administrative activity in Domus Utilitas.
+    </p>
+
+  </div>
+
+
+
+  <!-- =========================
+       FILTERS
+  ========================== -->
+
+  <div
+    class="mb-6 grid gap-3 rounded-xl border border-gray-700 bg-gray-800 p-4 md:grid-cols-3"
+  >
+
+
+    <!-- SEARCH -->
+
+    <div>
+
+      <label
+        for="audit-search"
+        class="mb-1 block text-sm text-gray-400"
+      >
+        Search
+      </label>
+
+      <input
+        id="audit-search"
+        type="search"
+        placeholder="Admin, action, details..."
+        class="w-full rounded-lg border border-gray-700 bg-gray-900 px-4 py-2 outline-none focus:border-blue-500"
+      >
+
+    </div>
+
+
+
+    <!-- ACTION -->
+
+    <div>
+
+      <label
+        for="action-filter"
+        class="mb-1 block text-sm text-gray-400"
+      >
+        Action
+      </label>
+
+      <select
+        id="action-filter"
+        class="w-full rounded-lg border border-gray-700 bg-gray-900 px-4 py-2 outline-none focus:border-blue-500"
+      >
+
+        <option value="">
+          All Actions
+        </option>
+
+      </select>
+
+    </div>
+
+
+
+    <!-- ENTITY -->
+
+    <div>
+
+      <label
+        for="entity-filter"
+        class="mb-1 block text-sm text-gray-400"
+      >
+        Type
+      </label>
+
+      <select
+        id="entity-filter"
+        class="w-full rounded-lg border border-gray-700 bg-gray-900 px-4 py-2 outline-none focus:border-blue-500"
+      >
+
+        <option value="">
+          All Types
+        </option>
+
+        <option value="product">
+          Product
+        </option>
+
+        <option value="order">
+          Order
+        </option>
+
+      </select>
+
+    </div>
+
+  </div>
+
+
+
+  <p
+    id="results-count"
+    class="mb-4 text-sm text-gray-400"
+  ></p>
+
+
+
+  <!-- =========================
+       AUDIT TABLE
+  ========================== -->
+
+  <div
+    class="overflow-x-auto rounded-xl border border-gray-700 bg-gray-800"
+  >
+
+    <table class="w-full text-left">
+
+      <thead
+        class="border-b border-gray-700 bg-gray-950 text-sm text-gray-300"
+      >
+
+        <tr>
+
+          <th class="px-4 py-3">
+            Date
+          </th>
+
+          <th class="px-4 py-3">
+            Admin
+          </th>
+
+          <th class="px-4 py-3">
+            Action
+          </th>
+
+          <th class="px-4 py-3">
+            Target
+          </th>
+
+          <th class="px-4 py-3">
+            Details
+          </th>
+
+        </tr>
+
+      </thead>
+
+
+      <tbody
+        id="audit-table-body"
+      >
+      </tbody>
+
+    </table>
+
+  </div>
+
+
+  <p
+    id="status"
+    class="mt-6 text-center text-gray-400"
+  >
+    Loading audit trail...
+  </p>
+
+
+</main>
+
+
+
+<script>
+
+const API =
+  'DomusUtilitas_api/';
+
+
+let auditLogs = [];
+
+
+const tableBody =
+  document.getElementById(
+    'audit-table-body'
+  );
+
+
+const statusEl =
+  document.getElementById(
+    'status'
+  );
+
+
+const searchInput =
+  document.getElementById(
+    'audit-search'
+  );
+
+
+const actionFilter =
+  document.getElementById(
+    'action-filter'
+  );
+
+
+const entityFilter =
+  document.getElementById(
+    'entity-filter'
+  );
+
+
+const resultsCount =
+  document.getElementById(
+    'results-count'
+  );
+
+
+
+// ==========================
+// CHECK ADMIN
+// ==========================
+
+async function checkAdmin() {
+
+  try {
+
+    const response =
+      await fetch(
+        API + 'auth/session.php',
+        {
+          credentials: 'include'
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !data.ok ||
+      !data.logged_in ||
+      data.user.role !== 'admin'
+    ) {
+
+      window.location.href =
+        'LoginPage.html';
+
+      return false;
+
+    }
+
+
+    document
+      .getElementById(
+        'admin-name'
+      )
+      .textContent =
+      'Logged in as ' +
+      data.user.username;
+
+
+    return true;
+
+
+  } catch (error) {
+
+    window.location.href =
+      'LoginPage.html';
+
+    return false;
+
+  }
+
+}
+
+
+
+// ==========================
+// FORMAT DATE
+// ==========================
+
+function formatDate(value) {
+
+  if (!value) {
+    return '—';
+  }
+
+
+  const date =
+    new Date(
+      value.replace(
+        ' ',
+        'T'
+      )
+    );
+
+
+  return date.toLocaleString(
+    'en-PH',
+    {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit'
+    }
+  );
+
+}
+
+
+
+// ==========================
+// FORMAT ACTION
+// ==========================
+
+function formatAction(action) {
+
+  return String(action || '')
+    .replaceAll('_', ' ')
+    .toLowerCase()
+    .replace(
+      /\b\w/g,
+      letter =>
+        letter.toUpperCase()
+    );
+
+}
+
+
+
+// ==========================
+// ACTION COLOR
+// ==========================
+
+function actionClass(action) {
+
+  if (
+    action ===
+    'PRODUCT_CREATED'
+  ) {
+
+    return 
+      'bg-green-900 text-green-300';
+
+  }
+
+
+  if (
+    action ===
+    'PRODUCT_UPDATED'
+  ) {
+
+    return 
+      'bg-blue-900 text-blue-300';
+
+  }
+
+
+  if (
+    action ===
+    'PRODUCT_DEACTIVATED'
+  ) {
+
+    return 
+      'bg-red-900 text-red-300';
+
+  }
+
+
+  if (
+    action ===
+    'PRODUCT_ACTIVATED'
+  ) {
+
+    return 
+      'bg-green-900 text-green-300';
+
+  }
+
+
+  if (
+    action ===
+    'ORDER_STATUS_CHANGED'
+  ) {
+
+    return 
+      'bg-purple-900 text-purple-300';
+
+  }
+
+
+  return 
+    'bg-gray-700 text-gray-300';
+
+}
+
+
+
+// ==========================
+// LOAD LOGS
+// ==========================
+
+async function loadAuditLogs() {
+
+  statusEl.textContent =
+    'Loading audit trail...';
+
+
+  try {
+
+    const response =
+      await fetch(
+        API +
+        'admin/audit_logs.php',
+        {
+          credentials: 'include'
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (!data.ok) {
+
+      throw new Error(
+        data.error ||
+        'Unable to load audit trail.'
+      );
+
+    }
+
+
+    auditLogs =
+      data.logs || [];
+
+
+    populateActionFilter();
+
+    applyFilters();
+
+
+  } catch (error) {
+
+    statusEl.textContent =
+      error.message;
+
+  }
+
+}
+
+
+
+// ==========================
+// ACTION FILTER OPTIONS
+// ==========================
+
+function populateActionFilter() {
+
+  const currentValue =
+    actionFilter.value;
+
+
+  const actions =
+    [
+      ...new Set(
+        auditLogs
+          .map(log =>
+            log.action
+          )
+          .filter(Boolean)
+      )
+    ].sort();
+
+
+  actionFilter.innerHTML =
+    '<option value="">All Actions</option>';
+
+
+  actions.forEach(action => {
+
+    const option =
+      document.createElement(
+        'option'
+      );
+
+
+    option.value =
+      action;
+
+
+    option.textContent =
+      formatAction(
+        action
+      );
+
+
+    actionFilter.appendChild(
+      option
+    );
+
+  });
+
+
+  if (
+    actions.includes(
+      currentValue
+    )
+  ) {
+
+    actionFilter.value =
+      currentValue;
+
+  }
+
+}
+
+
+
+// ==========================
+// FILTERS
+// ==========================
+
+function applyFilters() {
+
+  const searchTerm =
+    searchInput.value
+      .trim()
+      .toLowerCase();
+
+
+  const selectedAction =
+    actionFilter.value;
+
+
+  const selectedEntity =
+    entityFilter.value;
+
+
+  const filtered =
+    auditLogs.filter(log => {
+
+      const searchable =
+        [
+          log.admin_username,
+          log.action,
+          log.entity_type,
+          log.entity_id,
+          log.details
+        ]
+          .map(value =>
+            String(value || '')
+              .toLowerCase()
+          )
+          .join(' ');
+
+
+      const matchesSearch =
+        searchable.includes(
+          searchTerm
+        );
+
+
+      const matchesAction =
+        selectedAction === '' ||
+        log.action ===
+          selectedAction;
+
+
+      const matchesEntity =
+        selectedEntity === '' ||
+        log.entity_type ===
+          selectedEntity;
+
+
+      return (
+        matchesSearch &&
+        matchesAction &&
+        matchesEntity
+      );
+
+    });
+
+
+  resultsCount.textContent =
+    `Showing ${filtered.length} of ${auditLogs.length} logs`;
+
+
+  renderLogs(
+    filtered
+  );
+
+}
+
+
+
+// ==========================
+// RENDER
+// ==========================
+
+function renderLogs(logs) {
+
+  tableBody.replaceChildren();
+
+
+  if (logs.length === 0) {
+
+    statusEl.textContent =
+      'No audit activity found.';
+
+    return;
+
+  }
+
+
+  statusEl.textContent =
+    '';
+
+
+  logs.forEach(log => {
+
+    const row =
+      document.createElement(
+        'tr'
+      );
+
+
+    row.className =
+      'border-b border-gray-700 last:border-b-0 hover:bg-gray-700/30';
+
+
+    // DATE
+
+    const dateCell =
+      document.createElement(
+        'td'
+      );
+
+    dateCell.className =
+      'whitespace-nowrap px-4 py-4 text-sm text-gray-400';
+
+    dateCell.textContent =
+      formatDate(
+        log.created_at
+      );
+
+
+
+    // ADMIN
+
+    const adminCell =
+      document.createElement(
+        'td'
+      );
+
+    adminCell.className =
+      'px-4 py-4 font-semibold';
+
+    adminCell.textContent =
+      log.admin_username ||
+      'Unknown Admin';
+
+
+
+    // ACTION
+
+    const actionCell =
+      document.createElement(
+        'td'
+      );
+
+    actionCell.className =
+      'px-4 py-4';
+
+
+    const badge =
+      document.createElement(
+        'span'
+      );
+
+    badge.className =
+      'inline-block rounded px-2 py-1 text-xs font-semibold ' +
+      actionClass(
+        log.action
+      );
+
+    badge.textContent =
+      formatAction(
+        log.action
+      );
+
+
+    actionCell.appendChild(
+      badge
+    );
+
+
+
+    // TARGET
+
+    const targetCell =
+      document.createElement(
+        'td'
+      );
+
+    targetCell.className =
+      'px-4 py-4 text-sm';
+
+
+    const type =
+      log.entity_type
+        ? log.entity_type
+            .charAt(0)
+            .toUpperCase() +
+          log.entity_type.slice(1)
+        : '—';
+
+
+    targetCell.textContent =
+      log.entity_id
+        ? `${type} #${log.entity_id}`
+        : type;
+
+
+
+    // DETAILS
+
+    const detailsCell =
+      document.createElement(
+        'td'
+      );
+
+    detailsCell.className =
+      'max-w-xl px-4 py-4 text-sm text-gray-300';
+
+    detailsCell.textContent =
+      log.details || '—';
+
+
+
+    row.append(
+      dateCell,
+      adminCell,
+      actionCell,
+      targetCell,
+      detailsCell
+    );
+
+
+    tableBody.appendChild(
+      row
+    );
+
+  });
+
+}
+
+
+
+// ==========================
+// FILTER EVENTS
+// ==========================
+
+searchInput.addEventListener(
+  'input',
+  applyFilters
+);
+
+
+actionFilter.addEventListener(
+  'change',
+  applyFilters
+);
+
+
+entityFilter.addEventListener(
+  'change',
+  applyFilters
+);
+
+
+
+// ==========================
+// LOGOUT
+// ==========================
+
+document
+  .getElementById(
+    'logout-btn'
+  )
+  .addEventListener(
+    'click',
+    async () => {
+
+      try {
+
+        await fetch(
+          API +
+          'auth/logout.php',
+          {
+            method: 'POST',
+            credentials: 'include'
+          }
+        );
+
+      } finally {
+
+        window.location.href =
+          'LoginPage.html';
+
+      }
+
+    }
+  );
+
+
+
+// ==========================
+// START
+// ==========================
+
+async function start() {
+
+  const isAdmin =
+    await checkAdmin();
+
+
+  if (!isAdmin) {
+    return;
+  }
+
+
+  await loadAuditLogs();
+
+}
+
+
+start();
+
+</script>
+
+
+</body>
+
+</html>

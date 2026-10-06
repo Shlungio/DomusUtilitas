@@ -75,15 +75,6 @@
     <div class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-5 py-3">
 
 
-      <!-- HOME -->
-      <a
-        href="HomePage.html"
-        class="hover:text-blue-400"
-      >
-        Home
-      </a>
-
-
       <!-- LOGO -->
       <a
         href="ProductPage.html"
@@ -92,7 +83,7 @@
 
         <img
           src="logo.png"
-          class="h-11 w-11 rounded-full"
+          class="h-11 w-15 rounded-full object-contain"
           alt="DomusUtilitas"
         >
 
@@ -105,6 +96,14 @@
       <div class="flex flex-wrap items-center gap-4">
 
         <nav class="flex items-center gap-4 text-sm">
+
+          <a
+            href="HomePage.html"
+            class="hover:text-blue-400"
+          >
+            Home
+          </a>
+
 
           <a
             href="ProductPage.html"
@@ -121,6 +120,12 @@
             Orders
           </a>
 
+          <a
+            href="ProfilePage.html"
+            class="hover:text-blue-400"
+          >
+            Profile
+          </a>
 
           <a
             href="CartPage.html"
@@ -172,26 +177,26 @@
 
 
       <!-- SUCCESS -->
-      <div class="text-center">
-
-        <div
-          class="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-green-900 text-3xl font-bold text-green-300 no-print"
-        >
-          ✓
-        </div>
-
-
-        <h1 class="text-3xl font-bold">
-          Order Confirmed
-        </h1>
-
-
-        <p class="mt-2 text-gray-400">
-          Thank you for shopping with DomusUtilitas.
-        </p>
-
+     <div
+        id="success-icon"
+        class="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-green-900 text-3xl font-bold text-green-300 no-print"
+      >
+        ✓
       </div>
 
+      <h1
+        id="receipt-title"
+        class="text-3xl font-bold"
+      >
+        Order Confirmed
+      </h1>
+
+      <p
+        id="receipt-message"
+        class="mt-2 text-gray-400"
+      >
+        Thank you for shopping with DomusUtilitas.
+      </p>
 
 
       <!-- =========================
@@ -271,7 +276,72 @@
 
       </div>
 
+      <!-- =========================
+          DELIVERY INFORMATION
+      ========================== -->
+      <div
+        class="mt-7 rounded-xl border border-gray-700 bg-gray-900/50 p-5"
+      >
 
+        <h2 class="text-lg font-bold">
+          Delivery Information
+        </h2>
+
+        <div class="mt-4 grid gap-4 sm:grid-cols-2">
+
+          <!-- DELIVERY NAME -->
+          <div>
+
+            <p class="text-sm text-gray-400">
+              Recipient
+            </p>
+
+            <p
+              id="delivery-name"
+              class="mt-1 font-semibold"
+            >
+              Loading...
+            </p>
+
+          </div>
+
+
+          <!-- PHONE -->
+          <div class="sm:text-right">
+
+            <p class="text-sm text-gray-400">
+              Phone Number
+            </p>
+
+            <p
+              id="delivery-phone"
+              class="mt-1 font-semibold"
+            >
+              Loading...
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <!-- ADDRESS -->
+        <div class="mt-4">
+
+          <p class="text-sm text-gray-400">
+            Delivery Address
+          </p>
+
+          <p
+            id="delivery-address"
+            class="mt-1 whitespace-pre-line leading-6 text-gray-300"
+          >
+            Loading...
+          </p>
+
+        </div>
+
+      </div>
 
       <!-- =========================
            ORDER ITEMS
@@ -320,8 +390,6 @@
         </div>
 
       </div>
-
-
 
       <!-- =========================
            TOTAL
@@ -570,6 +638,29 @@ function getOrderId() {
       window.location.search
     );
 
+    const receiptMode =
+      params.get('view') === 'receipt';
+
+
+    if (receiptMode) {
+
+      document
+        .getElementById('receipt-title')
+        .textContent =
+        'Order Receipt';
+
+
+      document
+        .getElementById('receipt-message')
+        .textContent =
+        'Receipt details for your DomusUtilitas order.';
+
+
+      document
+        .getElementById('success-icon')
+        .classList.add('hidden');
+
+    }
 
   orderId =
     params.get(
@@ -841,6 +932,29 @@ async function loadReceipt() {
       order.status
     );
 
+        // ==========================
+        // DELIVERY INFORMATION
+        // ==========================
+
+        document
+          .getElementById('delivery-name')
+          .textContent =
+          order.delivery_name ||
+          'Not recorded for this order';
+
+
+        document
+          .getElementById('delivery-phone')
+          .textContent =
+          order.delivery_phone ||
+          'Not recorded';
+
+
+        document
+          .getElementById('delivery-address')
+          .textContent =
+          order.delivery_address ||
+          'Not recorded for this order';
 
     // TOTAL
     document

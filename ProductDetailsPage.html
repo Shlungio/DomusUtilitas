@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Domus Utilitas | Product Details</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="min-h-screen bg-gray-900 text-gray-100">
+
+<header class="sticky top-0 z-10 border-b border-gray-800 bg-gray-950/95">
+  <div class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-5 py-3">
+
+    <a href="HomePage.html" class="flex items-center gap-3">
+      <img src="logo.png" class="h-11 w-[60px] rounded-lg object-contain" alt="DomusUtilitas">
+      <b>DomusUtilitas</b>
+    </a>
+
+    <div class="flex flex-wrap items-center gap-4">
+      <nav class="flex items-center gap-4 text-sm">
+        <a href="HomePage.html" class="hover:text-blue-400">Home</a>
+        <a href="ProductPage.html" class="font-semibold text-blue-400">Products</a>
+        <a
+            href="ProfilePage.html"
+            class="hover:text-blue-400"
+          >
+            Profile
+          </a>
+        <a href="OrderHistoryPage.html" class="hover:text-blue-400">Orders</a>
+        <a href="CartPage.html" class="rounded bg-blue-600 px-3 py-1 hover:bg-blue-500">
+          Cart <span id="cart-count">0</span>
+        </a>
+      </nav>
+
+      <span id="customer-name" class="border-l border-gray-700 pl-4 text-sm text-gray-400"></span>
+
+      <button id="logout-btn" class="rounded bg-red-600 px-3 py-1 text-sm hover:bg-red-500">
+        Logout
+      </button>
+    </div>
+
+  </div>
+</header>
+
+<main class="mx-auto max-w-7xl px-5 py-10">
+
+  <div class="mb-6">
+    <a href="ProductPage.html" class="inline-flex items-center gap-2 text-sm text-blue-400 hover:text-blue-300">
+      ← Back to Products
+    </a>
+  </div>
+
+  <p id="status" class="text-center text-gray-400">Loading product...</p>
+
+  <section id="product-details" class="hidden overflow-hidden rounded-2xl border border-gray-700 bg-gray-800 shadow-xl">
+    <div class="grid lg:grid-cols-2">
+
+      <div class="flex items-center justify-center bg-gray-950/40 p-6 sm:p-10">
+        <img id="product-image" src="" alt="" class="max-h-[520px] w-full rounded-xl object-contain">
+      </div>
+
+      <div class="flex flex-col p-6 sm:p-10">
+
+        <div class="mb-5 flex flex-wrap gap-2">
+          <span id="product-category" class="rounded-lg bg-blue-600/20 px-3 py-1 text-sm font-semibold text-blue-300"></span>
+          <span id="product-subcategory" class="rounded-lg bg-gray-700 px-3 py-1 text-sm text-gray-300"></span>
+        </div>
+
+        <h1 id="product-name" class="text-3xl font-bold leading-tight sm:text-4xl"></h1>
+
+        <p id="product-price" class="mt-5 text-3xl font-bold text-blue-400"></p>
+
+        <div class="mt-5 border-y border-gray-700 py-4">
+          <p id="product-stock" class="font-semibold"></p>
+        </div>
+
+        <!-- PRODUCT INFORMATION -->
+        <div class="mt-6">
+
+          <h2 class="text-lg font-bold">
+            Product Information
+          </h2>
+
+
+          <!-- BRAND + MODEL -->
+          <div class="mt-4 grid gap-3 sm:grid-cols-2">
+
+            <div
+              id="brand-block"
+              class="hidden rounded-lg bg-gray-900/50 p-4"
+            >
+              <p class="text-xs font-semibold uppercase text-gray-500">
+                Brand
+              </p>
+
+              <p
+                id="product-brand"
+                class="mt-1 font-semibold text-gray-200"
+              ></p>
+            </div>
+
+
+            <div
+              id="model-block"
+              class="hidden rounded-lg bg-gray-900/50 p-4"
+            >
+              <p class="text-xs font-semibold uppercase text-gray-500">
+                Model
+              </p>
+
+              <p
+                id="product-model"
+                class="mt-1 font-semibold text-gray-200"
+              ></p>
+            </div>
+
+          </div>
+
+
+          <!-- DESCRIPTION -->
+          <div class="mt-5">
+
+            <h3 class="font-semibold">
+              Description
+            </h3>
+
+            <p
+              id="product-description"
+              class="mt-2 leading-7 text-gray-400"
+            ></p>
+
+          </div>
+
+
+          <!-- SPECIFICATIONS -->
+          <div
+            id="specifications-block"
+            class="mt-6 hidden"
+          >
+
+            <h3 class="font-semibold">
+              Specifications
+            </h3>
+
+            <p
+              id="product-specifications"
+              class="mt-2 whitespace-pre-line leading-7 text-gray-400"
+            ></p>
+
+          </div>
+
+        </div>
+
+        <div class="mt-8">
+          <p class="mb-2 text-sm font-semibold text-gray-300">Quantity</p>
+
+          <div class="flex w-fit items-center overflow-hidden rounded-lg border border-gray-700">
+            <button id="qty-minus" type="button" class="bg-gray-700 px-4 py-2 text-lg hover:bg-gray-600">−</button>
+            <span id="qty-value" class="min-w-[55px] bg-gray-800 px-4 py-2 text-center font-semibold">1</span>
+            <button id="qty-plus" type="button" class="bg-gray-700 px-4 py-2 text-lg hover:bg-gray-600">+</button>
+          </div>
+        </div>
+
+        <button id="add-cart-btn" type="button" class="mt-8 rounded-lg bg-blue-600 px-5 py-3 font-semibold hover:bg-blue-500">
+          Add to Cart
+        </button>
+
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<div id="toast" class="fixed bottom-5 right-5 hidden rounded bg-emerald-600 px-4 py-3 shadow">
+  Added to cart.
+</div>
+
+<script>
+const API = 'DomusUtilitas_api/';
+const KEY = 'du_cart_v1';
+
+let currentProduct = null;
+let quantity = 1;
+
+async function checkCustomer() {
+  try {
+    const response = await fetch(API + 'auth/session.php', {
+      credentials: 'include'
+    });
+
+    const data = await response.json();
+
+    if (!data.ok || !data.logged_in || data.user.role !== 'customer') {
+      window.location.href = 'LoginPage.html';
+      return false;
+    }
+
+    document.getElementById('customer-name').textContent = data.user.username;
+    return true;
+
+  } catch {
+    window.location.href = 'LoginPage.html';
+    return false;
+  }
+}
+
+function money(value) {
+  return '₱' + Number(value).toLocaleString('en-PH', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+}
+
+function cart() {
+  try {
+    return JSON.parse(localStorage.getItem(KEY)) || {};
+  } catch {
+    return {};
+  }
+}
+
+function save(cartData) {
+  localStorage.setItem(KEY, JSON.stringify(cartData));
+  updateCount();
+}
+
+function updateCount() {
+  const cartData = cart();
+
+  const count = Object.values(cartData).reduce(
+    (total, item) => total + Number(item.qty || 0),
+    0
+  );
+
+  document.getElementById('cart-count').textContent = count;
+}
+
+async function loadProduct() {
+  const params = new URLSearchParams(window.location.search);
+  const productId = Number(params.get('id'));
+  const status = document.getElementById('status');
+
+  if (!productId) {
+    status.textContent = 'No product was selected.';
+    return;
+  }
+
+  try {
+    const response = await fetch(API + 'products.php');
+    const data = await response.json();
+
+    if (!data.ok) {
+      throw new Error(data.error || 'Unable to load products.');
+    }
+
+    currentProduct = data.products.find(
+      product => Number(product.id) === productId
+    );
+
+    if (!currentProduct) {
+      status.textContent = 'Product not found.';
+      return;
+    }
+
+    renderProduct();
+
+  } catch (error) {
+    console.error(error);
+    status.textContent = 'Unable to load this product.';
+  }
+}
+
+function renderProduct() {
+  document.getElementById('status').textContent = '';
+  document.getElementById('product-details').classList.remove('hidden');
+
+  const image = document.getElementById('product-image');
+  image.src = currentProduct.image_url ||
+    'https://placehold.co/600x400/1f2937/ffffff?text=Product';
+  image.alt = currentProduct.name;
+
+  document.getElementById('product-name').textContent = currentProduct.name;
+  document.getElementById('product-price').textContent = money(currentProduct.price);
+  document.getElementById('product-category').textContent = currentProduct.category_name;
+  document.getElementById('product-subcategory').textContent = currentProduct.subcategory_name;
+
+  const stock = Number(currentProduct.stock);
+  const stockText = document.getElementById('product-stock');
+
+  if (stock > 0) {
+    stockText.textContent = 'In Stock: ' + stock;
+    stockText.className = 'font-semibold text-emerald-400';
+  } else {
+    stockText.textContent = 'Out of Stock';
+    stockText.className = 'font-semibold text-red-400';
+  }
+
+  // ==========================
+// BRAND
+// ==========================
+
+const brandBlock =
+  document.getElementById(
+    'brand-block'
+  );
+
+if (currentProduct.brand) {
+
+  document
+    .getElementById('product-brand')
+    .textContent =
+    currentProduct.brand;
+
+  brandBlock.classList.remove(
+    'hidden'
+  );
+
+}
+
+
+// ==========================
+// MODEL
+// ==========================
+
+const modelBlock =
+  document.getElementById(
+    'model-block'
+  );
+
+if (currentProduct.model) {
+
+  document
+    .getElementById('product-model')
+    .textContent =
+    currentProduct.model;
+
+  modelBlock.classList.remove(
+    'hidden'
+  );
+
+}
+
+
+// ==========================
+// DESCRIPTION
+// ==========================
+
+document
+  .getElementById(
+    'product-description'
+  )
+  .textContent =
+  currentProduct.description ||
+  (
+    'This product is part of our ' +
+    currentProduct.subcategory_name +
+    ' collection under ' +
+    currentProduct.category_name +
+    '.'
+  );
+
+
+// ==========================
+// SPECIFICATIONS
+// ==========================
+
+const specificationsBlock =
+  document.getElementById(
+    'specifications-block'
+  );
+
+if (currentProduct.specifications) {
+
+  document
+    .getElementById(
+      'product-specifications'
+    )
+    .textContent =
+    currentProduct.specifications;
+
+  specificationsBlock.classList.remove(
+    'hidden'
+  );
+
+}
+
+  const addButton = document.getElementById('add-cart-btn');
+
+  if (stock < 1) {
+    addButton.disabled = true;
+    addButton.textContent = 'Out of Stock';
+    addButton.classList.add('cursor-not-allowed', 'opacity-50');
+  }
+}
+
+function updateQuantityDisplay() {
+  document.getElementById('qty-value').textContent = quantity;
+}
+
+document.getElementById('qty-minus').addEventListener('click', () => {
+  if (quantity > 1) {
+    quantity--;
+    updateQuantityDisplay();
+  }
+});
+
+document.getElementById('qty-plus').addEventListener('click', () => {
+  if (!currentProduct) return;
+
+  const stock = Number(currentProduct.stock);
+
+  if (quantity < stock) {
+    quantity++;
+    updateQuantityDisplay();
+  }
+});
+
+document.getElementById('add-cart-btn').addEventListener('click', () => {
+  if (!currentProduct) return;
+
+  const cartData = cart();
+  const currentQuantity = cartData[currentProduct.id]?.qty || 0;
+  const newQuantity = currentQuantity + quantity;
+
+  if (newQuantity > Number(currentProduct.stock)) {
+    alert('Only ' + currentProduct.stock + ' available in stock.');
+    return;
+  }
+
+  cartData[currentProduct.id] = {
+    id: currentProduct.id,
+    name: currentProduct.name,
+    price: Number(currentProduct.price),
+    qty: newQuantity
+  };
+
+  save(cartData);
+
+  const toast = document.getElementById('toast');
+  toast.classList.remove('hidden');
+
+  setTimeout(() => {
+    toast.classList.add('hidden');
+  }, 1500);
+});
+
+document.getElementById('logout-btn').addEventListener('click', async () => {
+  try {
+    await fetch(API + 'auth/logout.php', {
+      method: 'POST',
+      credentials: 'include'
+    });
+  } finally {
+    window.location.href = 'LoginPage.html';
+  }
+});
+
+async function start() {
+  const isCustomer = await checkCustomer();
+  if (!isCustomer) return;
+
+  updateCount();
+  await loadProduct();
+}
+
+start();
+</script>
+
+</body>
+</html>

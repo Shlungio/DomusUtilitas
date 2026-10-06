@@ -9,7 +9,7 @@
     content="width=device-width, initial-scale=1"
   >
 
-  <title>DomusUtilitas | Cart</title>
+  <title>Domus Utilitas | Cart</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
@@ -34,11 +34,11 @@
 
         <img
           src="logo.png"
-          class="h-11 w-11 rounded-full"
+          class="h-11 w-15 rounded-full object-contain"
           alt="DomusUtilitas"
         >
 
-        <b>DomusUtilitas</b>
+        <b>Domus Utilitas</b>
 
       </a>
 
@@ -70,6 +70,12 @@
             Orders
           </a>
 
+          <a
+            href="ProfilePage.html"
+            class="hover:text-blue-400"
+          >
+            Profile
+          </a>
 
           <a
             href="CartPage.html"
@@ -155,6 +161,85 @@
         class="h-fit rounded-xl border border-gray-700 bg-gray-800 p-6"
       >
 
+      <!-- =========================
+            DELIVERY INFORMATION
+        ========================== -->
+        <div class="mb-6 border-b border-gray-700 pb-6">
+
+          <div class="flex items-center justify-between gap-4">
+
+            <h2 class="text-lg font-bold">
+              Delivery Information
+            </h2>
+
+            <a
+              href="ProfilePage.html"
+              class="text-sm font-semibold text-blue-400 hover:underline"
+            >
+              Edit Profile
+            </a>
+
+          </div>
+
+
+          <!-- LOADING / ERROR STATUS -->
+          <p
+            id="delivery-status"
+            class="mt-3 text-sm text-gray-400"
+          >
+            Loading delivery information...
+          </p>
+
+
+          <!-- COMPLETE PROFILE -->
+          <div
+            id="delivery-info"
+            class="mt-4 hidden space-y-2 text-sm"
+          >
+
+            <p
+              id="delivery-name"
+              class="font-semibold text-gray-100"
+            ></p>
+
+            <p
+              id="delivery-phone"
+              class="text-gray-400"
+            ></p>
+
+            <p
+              id="delivery-address"
+              class="whitespace-pre-line text-gray-300"
+            ></p>
+
+          </div>
+
+
+          <!-- INCOMPLETE PROFILE -->
+          <div
+            id="delivery-warning"
+            class="mt-4 hidden rounded-lg border border-yellow-800 bg-yellow-950/40 p-4 text-sm text-yellow-200"
+          >
+
+            <p class="font-semibold">
+              Delivery information is incomplete.
+            </p>
+
+            <p class="mt-1 text-yellow-300/80">
+              Add your full name, phone number, and delivery address before checking out.
+            </p>
+
+            <a
+              href="ProfilePage.html"
+              class="mt-3 inline-block font-semibold text-blue-400 hover:underline"
+            >
+              Complete Profile
+            </a>
+
+          </div>
+
+        </div>
+
         <h2 class="mb-5 text-xl font-bold">
           Order Summary
         </h2>
@@ -231,6 +316,8 @@ const KEY = 'du_cart_v1';
 
 let availableProducts = {};
 
+let deliveryProfileComplete = false;
+
 
 // ==========================
 // CHECK CUSTOMER SESSION
@@ -286,6 +373,157 @@ async function checkCustomer() {
 
 }
 
+// ==========================
+// LOAD DELIVERY PROFILE
+// ==========================
+
+async function loadDeliveryProfile() {
+
+  const status =
+    document.getElementById(
+      'delivery-status'
+    );
+
+  const info =
+    document.getElementById(
+      'delivery-info'
+    );
+
+  const warning =
+    document.getElementById(
+      'delivery-warning'
+    );
+
+
+  try {
+
+    const response =
+      await fetch(
+        API + 'profile/get.php',
+        {
+          credentials: 'include'
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (!data.ok) {
+
+      throw new Error(
+        data.error ||
+        'Unable to load delivery information.'
+      );
+
+    }
+
+
+    const profile =
+      data.profile;
+
+
+    const fullName =
+      String(
+        profile.full_name || ''
+      ).trim();
+
+
+    const phone =
+      String(
+        profile.phone || ''
+      ).trim();
+
+
+    const address =
+      String(
+        profile.address || ''
+      ).trim();
+
+
+    deliveryProfileComplete =
+      fullName !== '' &&
+      phone !== '' &&
+      address !== '';
+
+
+    status.textContent = '';
+
+
+    if (deliveryProfileComplete) {
+
+      document
+        .getElementById('delivery-name')
+        .textContent =
+        fullName;
+
+
+      document
+        .getElementById('delivery-phone')
+        .textContent =
+        phone;
+
+
+      document
+        .getElementById('delivery-address')
+        .textContent =
+        address;
+
+
+      info.classList.remove(
+        'hidden'
+      );
+
+
+      warning.classList.add(
+        'hidden'
+      );
+
+    } else {
+
+      info.classList.add(
+        'hidden'
+      );
+
+
+      warning.classList.remove(
+        'hidden'
+      );
+
+    }
+
+
+  } catch (error) {
+
+    deliveryProfileComplete =
+      false;
+
+
+    info.classList.add(
+      'hidden'
+    );
+
+
+    warning.classList.add(
+      'hidden'
+    );
+
+
+    status.textContent =
+      error.message;
+
+    status.classList.remove(
+      'text-gray-400'
+    );
+
+    status.classList.add(
+      'text-red-400'
+    );
+
+  }
+
+}
 
 // ==========================
 // FORMAT MONEY
@@ -634,6 +872,36 @@ function renderCart() {
     const subtotal =
       price * quantity;
 
+      const imageHtml =
+      available && product.image_url
+        ? `
+            <img
+              src="${product.image_url}"
+              alt="${item.name}"
+              class="h-28 w-28 shrink-0 rounded-xl bg-gray-900 object-contain p-2"
+            >
+          `
+        : `
+            <div
+              class="flex h-28 w-28 shrink-0 items-center justify-center rounded-xl bg-gray-900 text-xs text-gray-500"
+            >
+              No Image
+            </div>
+          `;
+
+
+    const metaParts = [];
+
+    if (available && product.brand) {
+      metaParts.push(product.brand);
+    }
+
+    if (available && product.subcategory_name) {
+      metaParts.push(product.subcategory_name);
+    }
+
+const metaText =
+  metaParts.join(' • ');
 
     if (available) {
 
@@ -653,92 +921,168 @@ function renderCart() {
 
 
     card.className =
-      'rounded-xl border border-gray-700 bg-gray-800 p-5';
+     'rounded-2xl border border-gray-700 bg-gray-800/80 p-5 shadow-sm transition hover:border-gray-600 hover:bg-gray-800';
 
 
-    card.innerHTML = `
+      card.innerHTML = `
 
-      <div class="flex flex-col justify-between gap-5 sm:flex-row sm:items-center">
+      <div class="flex flex-col gap-5 sm:flex-row">
 
-        <div>
-
-          <h3 class="text-lg font-semibold">
-            ${item.name}
-          </h3>
+        <!-- PRODUCT IMAGE -->
+        ${imageHtml}
 
 
-          <p class="mt-1 text-blue-400">
-            ${money(price)}
-          </p>
+        <!-- PRODUCT INFORMATION -->
+        <div class="min-w-0 flex-1">
 
 
-          ${
-            available
-              ? `
-                <p class="mt-1 text-xs text-gray-400">
-                  ${product.stock} currently in stock
-                </p>
-              `
-              : `
-                <p class="mt-1 text-sm font-semibold text-red-400">
-                  Currently unavailable
-                </p>
-              `
-          }
-
-        </div>
-
-
-        <div class="flex flex-wrap items-center gap-3">
-
-
-          <!-- QUANTITY -->
-          <div class="flex items-center rounded border border-gray-700">
-
-            <button
-              class="px-3 py-2 hover:bg-gray-700 disabled:opacity-50"
-              onclick="changeQuantity(${item.id}, -1)"
-              ${available ? '' : 'disabled'}
-            >
-              −
-            </button>
-
-
-            <span class="min-w-10 px-3 text-center">
-              ${quantity}
-            </span>
-
-
-            <button
-              class="px-3 py-2 hover:bg-gray-700 disabled:opacity-50"
-              onclick="changeQuantity(${item.id}, 1)"
-              ${available ? '' : 'disabled'}
-            >
-              +
-            </button>
-
-          </div>
-
-
-          <!-- SUBTOTAL -->
-          <div class="min-w-24 text-right font-semibold">
-
-            ${
-              available
-                ? money(subtotal)
-                : 'Unavailable'
-            }
-
-          </div>
-
-
-          <!-- REMOVE -->
-          <button
-            class="rounded bg-red-600 px-3 py-2 text-sm hover:bg-red-500"
-            onclick="removeItem(${item.id})"
+          <!-- TOP INFORMATION -->
+          <div
+            class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between"
           >
-            Remove
-          </button>
+
+            <div class="min-w-0">
+
+              <!-- NAME -->
+              <h3
+                class="break-words text-lg font-semibold leading-6 text-gray-100"
+              >
+                ${item.name}
+              </h3>
+
+
+              <!-- BRAND / CATEGORY -->
+              ${
+                metaText
+                  ? `
+                      <p class="mt-1 text-sm text-gray-500">
+                        ${metaText}
+                      </p>
+                    `
+                  : ''
+              }
+
+
+              <!-- UNIT PRICE -->
+              <p class="mt-2 font-semibold text-blue-400">
+                ${money(price)}
+              </p>
+
+
+              <!-- STOCK -->
+              ${
+                available
+                  ? Number(product.stock) > 0
+                    ? `
+                        <span
+                          class="mt-3 inline-flex rounded-full border border-green-800 bg-green-950/60 px-3 py-1 text-xs font-semibold text-green-300"
+                        >
+                          ✓ In Stock (${product.stock})
+                        </span>
+                      `
+                    : `
+                        <span
+                          class="mt-3 inline-flex rounded-full border border-red-800 bg-red-950/60 px-3 py-1 text-xs font-semibold text-red-300"
+                        >
+                          Out of Stock
+                        </span>
+                      `
+                  : `
+                      <span
+                        class="mt-3 inline-flex rounded-full border border-red-800 bg-red-950/60 px-3 py-1 text-xs font-semibold text-red-300"
+                      >
+                        Currently Unavailable
+                      </span>
+                    `
+              }
+
+            </div>
+
+
+
+            <!-- SUBTOTAL -->
+            <div class="shrink-0 lg:text-right">
+
+              <p
+                class="text-xs font-semibold uppercase tracking-wide text-gray-500"
+              >
+                Subtotal
+              </p>
+
+              <p class="mt-1 text-lg font-bold text-gray-100">
+
+                ${
+                  available
+                    ? money(subtotal)
+                    : 'Unavailable'
+                }
+
+              </p>
+
+            </div>
+
+          </div>
+
+
+
+          <!-- BOTTOM CONTROLS -->
+          <div
+            class="mt-5 flex flex-col gap-4 border-t border-gray-700 pt-4 md:flex-row md:items-center md:justify-between"
+          >
+
+
+            <!-- QUANTITY -->
+            <div class="flex flex-wrap items-center gap-3">
+
+              <span class="text-sm text-gray-400">
+                Quantity
+              </span>
+
+
+              <div
+                class="flex items-center overflow-hidden rounded-lg border border-gray-600 bg-gray-900"
+              >
+
+                <button
+                  class="px-4 py-2 text-lg transition hover:bg-gray-700 disabled:opacity-50"
+                  onclick="changeQuantity(${item.id}, -1)"
+                  ${available ? '' : 'disabled'}
+                >
+                  −
+                </button>
+
+
+                <span
+                  class="min-w-12 border-x border-gray-700 px-3 text-center font-semibold"
+                >
+                  ${quantity}
+                </span>
+
+
+                <button
+                  class="px-4 py-2 text-lg transition hover:bg-gray-700 disabled:opacity-50"
+                  onclick="changeQuantity(${item.id}, 1)"
+                  ${available ? '' : 'disabled'}
+                >
+                  +
+                </button>
+
+              </div>
+
+            </div>
+
+
+
+            <!-- REMOVE -->
+            <button
+              class="min-w-[105px] whitespace-nowrap rounded-lg border border-red-800 bg-red-950/30 px-4 py-2 text-sm font-semibold text-red-300 transition hover:bg-red-900/50 hover:text-red-200"
+              onclick="removeItem(${item.id})"
+            >
+              Remove
+            </button>
+
+
+          </div>
 
         </div>
 
@@ -782,9 +1126,10 @@ function renderCart() {
 
 
   // DISABLE CHECKOUT IF NEEDED
-  checkoutButton.disabled =
-    items.length === 0 ||
-    hasUnavailableItem;
+ checkoutButton.disabled =
+  items.length === 0 ||
+  hasUnavailableItem ||
+  !deliveryProfileComplete;
 
 }
 
@@ -977,7 +1322,9 @@ async function start() {
   }
 
 
-  await loadProducts();
+  await loadDeliveryProfile();
+
+  await loadProducts(); 
 
 }
 

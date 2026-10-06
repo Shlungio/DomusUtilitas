@@ -9,13 +9,24 @@
     content="width=device-width, initial-scale=1"
   >
 
-  <title>DomusUtilitas | Login</title>
+  <title>Domus Utilitas | Login</title>
 
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
 
-<body class="min-h-screen bg-gray-900 text-gray-100">
+<body
+  class="min-h-screen bg-gray-900 text-gray-100"
+  style="
+    background-image: linear-gradient(
+      rgba(3, 7, 18, 0.6),
+      rgba(3, 7, 18, 0.6)
+    ),
+    url(https://cdn.pixabay.com/photo/2016/11/18/17/20/living-room-1835923_1280.jpg);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;">
 
 
   <!-- =========================
@@ -23,142 +34,300 @@
   ========================== -->
   <header class="border-b border-gray-800 bg-gray-950/95">
 
-    <div class="mx-auto flex max-w-7xl items-center justify-between px-5 py-3">
+    <div
+      class="mx-auto flex max-w-7xl items-center
+             justify-between px-5 py-3"
+    >
 
-      <!-- LOGO -->
+      <!-- LOGO / WEBSITE NAME -->
       <div class="flex items-center gap-3">
 
         <img
           src="logo.png"
-          class="h-11 w-11 rounded-full"
+          class="h-11 w-15 rounded-full object-contain"
           alt="DomusUtilitas"
         >
 
-        <b>DomusUtilitas</b>
+        <b >
+          DomusUtilitas
+        </b>
 
       </div>
 
-		<a
-		  href="HomePage.html"
-		  class="hover:text-blue-400"
-		>
-		  Home
-		</a>
-      <!-- REGISTER LINK -->
-      <a
-        href="RegisterPage.html"
-        class="text-sm text-blue-400 hover:underline"
-      >
-        Create Account
-      </a>
+
+      <!-- RIGHT SIDE NAVIGATION -->
+      <div class="flex items-center gap-6" >
+
+        <a
+          href="HomePage.html"
+          class="text-sm text-gray-300
+                 transition hover:text-blue-400"
+        >
+          Home
+        </a>
+
+        <a
+          href="RegisterPage.html"
+          class="rounded-lg bg-blue-600
+                 px-4 py-2 text-sm font-medium
+                 transition hover:bg-blue-500"
+        >
+          Create Account
+        </a>
+
+      </div>
 
     </div>
 
   </header>
 
 
+
   <!-- =========================
-       MAIN
+       MAIN AREA
   ========================== -->
-  <main class="mx-auto flex max-w-md flex-col px-5 py-16">
+  <main
+    class="mx-auto flex min-h-[calc(100vh-70px)]
+           max-w-5xl items-center
+           px-5 py-16"
+  >
 
 
-    <h1 class="mb-1 text-center text-3xl font-bold">
-      Welcome Back
-    </h1>
-
-
-    <p class="mb-8 text-center text-gray-400">
-      Log in to your DomusUtilitas account.
-    </p>
-
-
-    <!-- LOGIN FORM -->
-    <form
-      id="login-form"
-      class="flex flex-col gap-4 rounded-xl border border-gray-700 bg-gray-800 p-6"
+    <!-- =========================
+         LOGIN CONTAINER
+    ========================== -->
+    <div
+      class="grid w-full overflow-hidden
+             rounded-2xl border border-gray-700
+             bg-gray-800 shadow-2xl
+             md:grid-cols-2"
     >
 
 
-      <!-- USERNAME -->
-      <div>
+      <!-- =========================
+           LEFT DESIGN SECTION
+      ========================== -->
+      <div
+        class="relative flex flex-col justify-center
+               overflow-hidden bg-gray-950 p-8
+               md:p-12"
+      >
 
-        <label
-          for="username"
-          class="mb-1 block text-sm text-gray-300"
+        <div
+          class="absolute inset-4
+                 overflow-hidden rounded-xl"
         >
-          Username
-        </label>
+
+          <img
+            id="background-image"
+            src="webdecor1.jpg"
+            alt=""
+            class="h-full w-full object-cover object-center"
+            style="transition: opacity 1s ease-in-out;"
+          >
+
+          <!-- DARK OVERLAY -->
+          <div
+            class="absolute inset-0 bg-gray-950/60"
+          ></div>
+
+        </div>
 
 
-        <input
-          id="username"
-          name="username"
-          type="text"
-          required
-          autocomplete="username"
-          class="w-full rounded border border-gray-700 bg-gray-900 px-3 py-2 outline-none focus:border-blue-500"
-        >
+        <!-- CONTENT ON TOP -->
+        <div class="relative z-10">
+
+          <div class="mb-6">
+
+            <img
+              src="logo.png"
+              class="h-15 w-15 rounded-full object-contain"
+              alt="DomusUtilitas Logo"
+            >
+
+          </div>
+
+
+          <h2
+            class="mb-3 text-3xl font-bold
+                   text-white"
+          >
+            Domus Utilitas
+          </h2>
+
+
+          <p
+            class="max-w-sm leading-relaxed
+                   text-gray-300"
+          >
+            Find useful products and essentials
+            designed to make everyday living simpler.
+          </p>
+
+        </div>
 
       </div>
 
 
-      <!-- PASSWORD -->
-      <div>
 
-        <label
-          for="password"
-          class="mb-1 block text-sm text-gray-300"
+      <!-- =========================
+           RIGHT LOGIN SECTION
+      ========================== -->
+      <div class="p-8 md:p-12">
+
+        <!-- TITLE -->
+        <h1
+          class="mb-2 text-3xl font-bold"
         >
-          Password
-        </label>
+          Welcome Back
+        </h1>
 
 
-        <input
-          id="password"
-          name="password"
-          type="password"
-          required
-          autocomplete="current-password"
-          class="w-full rounded border border-gray-700 bg-gray-900 px-3 py-2 outline-none focus:border-blue-500"
+        <p
+          class="mb-8 text-gray-400"
         >
+          Log in to your DomusUtilitas account.
+        </p>
+
+
+
+        <!-- =========================
+             LOGIN FORM
+        ========================== -->
+        <form
+          id="login-form"
+          class="flex flex-col gap-5"
+        >
+
+
+          <!-- USERNAME -->
+          <div>
+
+            <label
+              for="username"
+              class="mb-2 block text-sm
+                     font-medium text-gray-300"
+            >
+              Username
+            </label>
+
+
+            <input
+              id="username"
+              type="text"
+              autocomplete="username"
+              placeholder="Enter your username"
+              required
+
+              class="w-full rounded-lg
+                     border border-gray-700
+                     bg-gray-900
+                     px-4 py-3
+                     text-gray-100
+                     outline-none
+                     transition
+                     placeholder:text-gray-600
+                     focus:border-blue-500
+                     focus:ring-2
+                     focus:ring-blue-500/20"
+            >
+
+          </div>
+
+
+
+          <!-- PASSWORD -->
+          <div>
+
+            <label
+              for="password"
+              class="mb-2 block text-sm
+                     font-medium text-gray-300"
+            >
+              Password
+            </label>
+
+
+            <input
+              id="password"
+              type="password"
+              autocomplete="username"
+              placeholder="Enter your password"
+              required
+
+              class="w-full rounded-lg
+                     border border-gray-700
+                     bg-gray-900
+                     px-4 py-3
+                     text-gray-100
+                     outline-none
+                     transition
+                     placeholder:text-gray-600
+                     focus:border-blue-500
+                     focus:ring-2
+                     focus:ring-blue-500/20"
+            >
+
+          </div>
+
+
+
+          <!-- LOGIN MESSAGE -->
+          <p
+            id="login-message"
+            class="hidden rounded-lg
+                   border px-4 py-3
+                   text-sm"
+          ></p>
+
+
+
+          <!-- LOGIN BUTTON -->
+          <button
+            id="login-button"
+            type="submit"
+
+            class="mt-2 rounded-lg
+                   bg-blue-600 py-3
+                   font-semibold
+                   transition
+                   hover:bg-blue-500
+                   disabled:cursor-not-allowed
+                   disabled:opacity-60"
+          >
+            Log In
+          </button>
+
+
+        </form>
+
+
+
+        <!-- REGISTER -->
+        <p
+          class="mt-6 text-center
+                 text-sm text-gray-400"
+        >
+
+          Don't have an account?
+
+          <a
+            href="RegisterPage.html"
+            class="text-blue-400
+                   hover:underline"
+          >
+            Register here
+          </a>
+
+        </p>
+
 
       </div>
 
-
-      <!-- ERROR -->
-      <p
-        id="error"
-        class="hidden text-sm text-red-400"
-      ></p>
-
-
-      <!-- LOGIN BUTTON -->
-      <button
-        type="submit"
-        id="submit-btn"
-        class="mt-2 rounded bg-blue-600 py-2 font-semibold hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
-      >
-        Log In
-      </button>
-
-    </form>
-
-
-    <p class="mt-6 text-center text-sm text-gray-400">
-
-      Don't have an account?
-
-      <a
-        href="RegisterPage.html"
-        class="text-blue-400 hover:underline"
-      >
-        Register here
-      </a>
-
-    </p>
+    </div>
 
   </main>
+
 
 
 <script>
@@ -167,40 +336,20 @@ const API = 'DomusUtilitas_api/';
 
 
 // ==========================
-// REDIRECT BY ROLE
-// ==========================
-
-function redirectUser(user) {
-
-  if (user.role === 'admin') {
-
-    window.location.href =
-      'AdminProducts.html';
-
-  } else {
-
-    window.location.href =
-      'ProductPage.html';
-
-  }
-
-}
-
-
-// ==========================
-// CHECK EXISTING SESSION
+// EXISTING SESSION CHECK
 // ==========================
 
 async function checkExistingSession() {
 
   try {
 
-    const response = await fetch(
-      API + 'auth/session.php',
-      {
-        credentials: 'include'
-      }
-    );
+    const response =
+      await fetch(
+        API + 'auth/session.php',
+        {
+          credentials: 'include'
+        }
+      );
 
 
     const data =
@@ -208,14 +357,31 @@ async function checkExistingSession() {
 
 
     if (
-      data.ok &&
-      data.logged_in &&
-      data.user
+      !data.ok ||
+      !data.logged_in
     ) {
 
-      redirectUser(
-        data.user
-      );
+      return;
+
+    }
+
+
+    // ADMIN
+    if (data.user.role === 'admin') {
+
+      window.location.href =
+        'AdminProducts.html';
+
+      return;
+
+    }
+
+
+    // CUSTOMER
+    if (data.user.role === 'customer') {
+
+      window.location.href =
+        'ProductPage.html';
 
     }
 
@@ -223,13 +389,59 @@ async function checkExistingSession() {
   } catch (error) {
 
     console.error(
-      'Unable to check session:',
+      'Session check failed:',
       error
     );
 
   }
 
 }
+
+
+
+// ==========================
+// DISPLAY LOGIN MESSAGE
+// ==========================
+
+function showMessage(
+  message,
+  type = 'error'
+) {
+
+  const box =
+    document.getElementById(
+      'login-message'
+    );
+
+
+  box.textContent =
+    message;
+
+
+  box.className =
+    'rounded-lg border px-4 py-3 text-sm';
+
+
+  if (type === 'success') {
+
+    box.classList.add(
+      'border-green-700',
+      'bg-green-950/50',
+      'text-green-300'
+    );
+
+  } else {
+
+    box.classList.add(
+      'border-red-700',
+      'bg-red-950/50',
+      'text-red-300'
+    );
+
+  }
+
+}
+
 
 
 // ==========================
@@ -245,72 +457,71 @@ document
       event.preventDefault();
 
 
-      const errorEl =
-        document.getElementById(
-          'error'
-        );
+      const username =
+        document
+          .getElementById('username')
+          .value
+          .trim();
+
+
+      const password =
+        document
+          .getElementById('password')
+          .value;
 
 
       const button =
         document.getElementById(
-          'submit-btn'
+          'login-button'
         );
 
 
-      errorEl.classList.add(
-        'hidden'
-      );
+      if (
+        username === '' ||
+        password === ''
+      ) {
 
+        showMessage(
+          'Please enter your username and password.'
+        );
 
-      button.disabled =
-        true;
+        return;
 
-
-      button.textContent =
-        'Logging in...';
+      }
 
 
       try {
 
-        const response = await fetch(
-          API + 'auth/login.php',
-          {
+        button.disabled = true;
+        button.textContent =
+          'Logging in...';
 
-            method: 'POST',
 
-            headers: {
-              'Content-Type':
-                'application/json'
-            },
+        const response =
+          await fetch(
+            API + 'auth/login.php',
+            {
+              method: 'POST',
 
-            credentials: 'include',
+              credentials: 'include',
 
-            body: JSON.stringify({
+              headers: {
+                'Content-Type':
+                  'application/json'
+              },
 
-              username:
-                document
-                  .getElementById(
-                    'username'
-                  )
-                  .value
-                  .trim(),
-
-              password:
-                document
-                  .getElementById(
-                    'password'
-                  )
-                  .value
-
-            })
-
-          }
-        );
+              body: JSON.stringify({
+                username: username,
+                password: password
+              })
+            }
+          );
 
 
         const data =
           await response.json();
 
+            console.log('LOGIN RESPONSE:', data);
 
         if (!data.ok) {
 
@@ -321,29 +532,45 @@ document
 
         }
 
+        
+        if (data.verification_required === true) {
+          window.location.href = 'VerifyEmailPage.html';
+          return;
+        }
 
-        redirectUser(
-          data.user
+
+        showMessage(
+          'Login successful.',
+          'success'
         );
+
+
+        // ADMIN
+        if (data.user.role === 'admin') {
+
+          window.location.href =
+            'AdminProducts.html';
+
+          return;
+
+        }
+
+
+        // CUSTOMER
+        window.location.href =
+          'ProductPage.html';
 
 
       } catch (error) {
 
-        errorEl.textContent =
-          error.message;
-
-
-        errorEl.classList.remove(
-          'hidden'
+        showMessage(
+          error.message
         );
 
 
       } finally {
 
-        button.disabled =
-          false;
-
-
+        button.disabled = false;
         button.textContent =
           'Log In';
 
@@ -353,13 +580,85 @@ document
   );
 
 
+
 // ==========================
-// START
+// IMAGE SLIDESHOW
+// ==========================
+
+const images = [
+
+  "webdecor1.jpg",
+
+  "webdecor2.jpg",
+
+  "webdecor3.jpg"
+
+];
+
+
+let currentImage = 0;
+
+
+const backgroundImage =
+  document.getElementById(
+    'background-image'
+  );
+
+
+setInterval(
+  () => {
+
+    // FADE OUT
+    backgroundImage.classList.add(
+      'opacity-0'
+    );
+
+
+    setTimeout(
+      () => {
+
+        // NEXT IMAGE
+        currentImage++;
+
+
+        if (
+          currentImage >=
+          images.length
+        ) {
+
+          currentImage = 0;
+
+        }
+
+
+        // CHANGE IMAGE
+        backgroundImage.src =
+          images[currentImage];
+
+
+        // FADE BACK IN
+        backgroundImage.classList.remove(
+          'opacity-0'
+        );
+
+      },
+      1000
+    );
+
+  },
+  5000
+);
+
+
+
+// ==========================
+// START PAGE
 // ==========================
 
 checkExistingSession();
 
 </script>
+
 
 </body>
 

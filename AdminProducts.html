@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>DomusUtilitas | Admin Products</title>
+  <title>Domus Utilitas | Admin Products</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
@@ -18,7 +18,7 @@
     <div class="mx-auto flex max-w-7xl items-center justify-between px-5 py-4">
 
       <div>
-        <h1 class="text-xl font-bold">DomusUtilitas</h1>
+        <h1 class="text-xl font-bold">Domus Utilitas</h1>
         <p class="text-xs text-gray-400">Admin Panel</p>
       </div>
 
@@ -53,6 +53,13 @@
 	  Home
 	</a>
 
+  <a
+    href="AdminDashboard.html"
+    class="text-gray-300 hover:text-blue-400"
+  >
+    Dashboard
+  </a>
+
     <a
       href="AdminProducts.html"
       class="font-semibold text-blue-400"
@@ -65,6 +72,13 @@
       class="text-gray-300 hover:text-blue-400"
     >
       Orders
+    </a>
+
+    <a
+      href="AdminAudit.html"
+      class="text-gray-300 hover:text-blue-400"
+    >
+      Audit Trail
     </a>
 
   </nav>
@@ -96,6 +110,121 @@
 
     </div>
 
+    <!-- =========================
+     PRODUCT SEARCH / FILTERS
+========================== -->
+<div
+  class="mb-6 grid gap-3 rounded-xl border border-gray-700 bg-gray-800 p-4 lg:grid-cols-4"
+>
+
+  <!-- SEARCH -->
+  <div>
+
+    <label
+      for="product-search"
+      class="mb-1 block text-sm text-gray-400"
+    >
+      Search Products
+    </label>
+
+    <input
+      id="product-search"
+      type="search"
+      placeholder="Name, ID, brand, category..."
+      class="w-full rounded-lg border border-gray-700 bg-gray-900 px-4 py-2 outline-none focus:border-blue-500"
+    >
+
+  </div>
+
+
+  <!-- CATEGORY FILTER -->
+  <div>
+
+    <label
+      for="category-filter"
+      class="mb-1 block text-sm text-gray-400"
+    >
+      Category
+    </label>
+
+    <select
+      id="category-filter"
+      class="w-full rounded-lg border border-gray-700 bg-gray-900 px-4 py-2 outline-none focus:border-blue-500"
+    >
+      <option value="">
+        All Categories
+      </option>
+    </select>
+
+  </div>
+
+
+  <!-- STATUS FILTER -->
+  <div>
+
+    <label
+      for="status-filter"
+      class="mb-1 block text-sm text-gray-400"
+    >
+      Status
+    </label>
+
+    <select
+      id="status-filter"
+      class="w-full rounded-lg border border-gray-700 bg-gray-900 px-4 py-2 outline-none focus:border-blue-500"
+    >
+      <option value="">
+        All Products
+      </option>
+
+      <option value="active">
+        Active
+      </option>
+
+      <option value="inactive">
+        Inactive
+      </option>
+
+    </select>
+
+  </div>
+
+  <!-- STOCK FILTER -->
+<div>
+
+  <label
+    for="stock-filter"
+    class="mb-1 block text-sm text-gray-400"
+  >
+    Stock Level
+  </label>
+
+  <select
+    id="stock-filter"
+    class="w-full rounded-lg border border-gray-700 bg-gray-900 px-4 py-2 outline-none focus:border-blue-500"
+  >
+
+    <option value="">
+      All Stock Levels
+    </option>
+
+    <option value="low">
+      Low Stock
+    </option>
+
+    <option value="out">
+      Out of Stock
+    </option>
+
+    <option value="healthy">
+      In Stock
+    </option>
+
+  </select>
+
+</div>
+
+</div>
 
     <!-- PRODUCT TABLE -->
     <div class="overflow-x-auto rounded-xl border border-gray-700 bg-gray-800">
@@ -139,7 +268,7 @@
     id="product-modal"
     class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70 px-4">
 
-    <div class="w-full max-w-lg rounded-xl border border-gray-700 bg-gray-800 p-6">
+    <div class="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-xl border border-gray-700 bg-gray-800 p-6">
 
       <div class="mb-6 flex items-center justify-between">
 
@@ -182,6 +311,78 @@
 
         </div>
 
+        <!-- BRAND -->
+        <div>
+
+          <label
+            for="product-brand"
+            class="mb-1 block text-sm text-gray-300">
+            Brand
+          </label>
+
+          <input
+            id="product-brand"
+            type="text"
+            maxlength="100"
+            placeholder="Optional"
+            class="w-full rounded border border-gray-700 bg-gray-900 px-3 py-2 outline-none focus:border-blue-500">
+
+        </div>
+
+
+        <!-- MODEL -->
+        <div>
+
+          <label
+            for="product-model"
+            class="mb-1 block text-sm text-gray-300">
+            Model
+          </label>
+
+          <input
+            id="product-model"
+            type="text"
+            maxlength="150"
+            placeholder="Optional"
+            class="w-full rounded border border-gray-700 bg-gray-900 px-3 py-2 outline-none focus:border-blue-500">
+
+        </div>
+
+
+        <!-- DESCRIPTION -->
+        <div>
+
+          <label
+            for="product-description"
+            class="mb-1 block text-sm text-gray-300">
+            Description
+          </label>
+
+          <textarea
+            id="product-description"
+            rows="3"
+            placeholder="Optional short product description"
+            class="w-full resize-y rounded border border-gray-700 bg-gray-900 px-3 py-2 outline-none focus:border-blue-500"></textarea>
+
+        </div>
+
+
+        <!-- SPECIFICATIONS -->
+        <div>
+
+          <label
+            for="product-specifications"
+            class="mb-1 block text-sm text-gray-300">
+            Specifications
+          </label>
+
+          <textarea
+            id="product-specifications"
+            rows="5"
+            placeholder="One specification per line"
+            class="w-full resize-y rounded border border-gray-700 bg-gray-900 px-3 py-2 outline-none focus:border-blue-500"></textarea>
+
+        </div>
 
         <!-- CATEGORY -->
         <div>
@@ -325,6 +526,7 @@
 <script>
 
 const API = 'DomusUtilitas_api/';
+const LOW_STOCK_LIMIT = 5;
 
 const tableBody =
   document.getElementById('product-table-body');
@@ -353,6 +555,25 @@ const saveButton =
 const modalTitle =
   document.getElementById('modal-title');
 
+const searchInput =
+  document.getElementById(
+    'product-search'
+  );
+
+const categoryFilter =
+  document.getElementById(
+    'category-filter'
+  );
+
+const statusFilter =
+  document.getElementById(
+    'status-filter'
+  );
+
+const stockFilter =
+  document.getElementById(
+    'stock-filter'
+  );
 
 let productOptions = [];
 
@@ -472,7 +693,9 @@ async function loadProducts() {
 
     products = data.products;
 
-    renderProducts(products);
+    populateCategoryFilter();
+
+    applyProductFilters();
 
 
   } catch (error) {
@@ -484,7 +707,257 @@ async function loadProducts() {
 
 }
 
+// ========================================
+// POPULATE CATEGORY FILTER
+// ========================================
 
+function populateCategoryFilter() {
+
+  const currentValue =
+    categoryFilter.value;
+
+
+  const categories =
+    [
+      ...new Set(
+        products
+          .map(product =>
+            product.category_name
+          )
+          .filter(Boolean)
+      )
+    ]
+      .sort(
+        (a, b) =>
+          a.localeCompare(b)
+      );
+
+
+  categoryFilter.innerHTML =
+    '<option value="">All Categories</option>';
+
+
+  categories.forEach(category => {
+
+    const option =
+      document.createElement(
+        'option'
+      );
+
+    option.value =
+      category;
+
+    option.textContent =
+      category;
+
+    categoryFilter.appendChild(
+      option
+    );
+
+  });
+
+
+  if (
+    categories.includes(
+      currentValue
+    )
+  ) {
+
+    categoryFilter.value =
+      currentValue;
+
+  }
+
+}
+
+// ========================================
+// SEARCH / FILTER PRODUCTS
+// ========================================
+
+function applyProductFilters() {
+
+  const searchTerm =
+    searchInput.value
+      .trim()
+      .toLowerCase();
+
+  const selectedCategory =
+    categoryFilter.value;
+
+  const selectedStatus =
+    statusFilter.value;
+
+  const selectedStock =
+    stockFilter.value;
+
+
+  const filteredProducts =
+    products.filter(product => {
+
+      // =========================
+      // SEARCH
+      // =========================
+
+      const searchableText = [
+        product.id,
+        product.name,
+        product.brand,
+        product.model,
+        product.category_name,
+        product.subcategory_name
+      ]
+        .map(value =>
+          String(value || '')
+            .toLowerCase()
+        )
+        .join(' ');
+
+
+      const matchesSearch =
+        searchableText.includes(
+          searchTerm
+        );
+
+
+      // =========================
+      // CATEGORY
+      // =========================
+
+      const matchesCategory =
+        selectedCategory === '' ||
+        product.category_name ===
+          selectedCategory;
+
+
+      // =========================
+      // STATUS
+      // =========================
+
+      const isActive =
+        Number(
+          product.is_active
+        ) === 1;
+
+
+      let matchesStatus =
+        true;
+
+
+      if (
+        selectedStatus ===
+        'active'
+      ) {
+
+        matchesStatus =
+          isActive;
+
+      }
+
+
+      if (
+        selectedStatus ===
+        'inactive'
+      ) {
+
+        matchesStatus =
+          !isActive;
+
+      }
+
+
+      // =========================
+      // STOCK LEVEL
+      // =========================
+
+      const stock =
+        Number(
+          product.stock
+        );
+
+
+      let matchesStock =
+        true;
+
+
+      if (
+        selectedStock ===
+        'low'
+      ) {
+
+        matchesStock =
+          stock > 0 &&
+          stock <= LOW_STOCK_LIMIT;
+
+      }
+
+
+      if (
+        selectedStock ===
+        'out'
+      ) {
+
+        matchesStock =
+          stock === 0;
+
+      }
+
+
+      if (
+        selectedStock ===
+        'healthy'
+      ) {
+
+        matchesStock =
+          stock > LOW_STOCK_LIMIT;
+
+      }
+
+
+      // =========================
+      // FINAL RESULT
+      // =========================
+
+      return (
+        matchesSearch &&
+        matchesCategory &&
+        matchesStatus &&
+        matchesStock
+      );
+
+    });
+
+
+  renderProducts(
+    filteredProducts
+  );
+
+}
+
+// ========================================
+// SEARCH / FILTER EVENTS
+// ========================================
+
+searchInput.addEventListener(
+  'input',
+  applyProductFilters
+);
+
+
+categoryFilter.addEventListener(
+  'change',
+  applyProductFilters
+);
+
+
+statusFilter.addEventListener(
+  'change',
+  applyProductFilters
+);
+
+stockFilter.addEventListener(
+  'change',
+  applyProductFilters
+);
 
 // ========================================
 // RENDER PRODUCTS
@@ -528,8 +1001,48 @@ function renderProducts(productList) {
         ${product.id}
       </td>
 
-      <td class="px-4 py-4 font-semibold">
-        ${product.name}
+      <td class="px-4 py-4">
+
+        <div class="flex items-center gap-3">
+
+          ${
+            product.image_url
+              ? `
+                  <img
+                    src="${product.image_url}"
+                    alt="${product.name}"
+                    class="h-12 w-12 shrink-0 rounded-lg bg-gray-900 object-contain p-1"
+                    onerror="
+                      this.classList.add('hidden');
+                      this.nextElementSibling.classList.remove('hidden');
+                    "
+                  >
+
+                  <div
+                    class="hidden h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-gray-900 text-[10px] text-gray-500"
+                  >
+                    No Image
+                  </div>
+                `
+              : `
+                  <div
+                    class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-gray-900 text-[10px] text-gray-500"
+                  >
+                    No Image
+                  </div>
+                `
+          }
+
+          <div class="min-w-0">
+
+            <p class="font-semibold">
+              ${product.name}
+            </p>
+
+          </div>
+
+        </div>
+
       </td>
 
       <td class="px-4 py-4">
@@ -545,31 +1058,68 @@ function renderProducts(productList) {
       </td>
 
       <td class="px-4 py-4">
-        ${product.stock}
-      </td>
 
-      <td class="px-4 py-4">
+    ${
+      Number(product.stock) === 0
+        ? `
+            <div>
+              <p class="font-bold text-red-400">
+                0
+              </p>
 
-        <span
-          class="
-            rounded px-2 py-1 text-xs font-semibold
-            ${
-              active
-                ? 'bg-green-900 text-green-300'
-                : 'bg-gray-700 text-gray-300'
-            }
-          ">
+              <span
+                class="mt-1 inline-block rounded bg-red-950 px-2 py-1 text-xs font-semibold text-red-300"
+              >
+                Out of Stock
+              </span>
+            </div>
+          `
 
-          ${
-            active
-              ? 'Active'
-              : 'Inactive'
-          }
+        : Number(product.stock) <= LOW_STOCK_LIMIT
+          ? `
+              <div>
+                <p class="font-bold text-orange-300">
+                  ${product.stock}
+                </p>
 
-        </span>
+                <span
+                  class="mt-1 inline-block rounded bg-orange-950 px-2 py-1 text-xs font-semibold text-orange-300"
+                >
+                  ⚠ Low Stock
+                </span>
+              </div>
+            `
 
-      </td>
+          : `
+              <span class="font-semibold text-gray-200">
+                ${product.stock}
+              </span>
+            `
+    }
 
+    </td>
+
+          <td class="px-4 py-4">
+
+            <span
+              class="
+                rounded px-2 py-1 text-xs font-semibold
+                ${
+                  active
+                    ? 'bg-green-900 text-green-300'
+                    : 'bg-gray-700 text-gray-300'
+                }
+              ">
+
+              ${
+                active
+                  ? 'Active'
+                  : 'Inactive'
+              }
+
+            </span>
+
+          </td>
 
       <td class="px-4 py-4">
 
@@ -892,10 +1442,34 @@ function editProduct(id) {
     'Save Changes';
 
 
-  document
+    document
     .getElementById('product-name')
     .value =
     product.name;
+
+
+  document
+    .getElementById('product-brand')
+    .value =
+    product.brand || '';
+
+
+  document
+    .getElementById('product-model')
+    .value =
+    product.model || '';
+
+
+  document
+    .getElementById('product-description')
+    .value =
+    product.description || '';
+
+
+  document
+    .getElementById('product-specifications')
+    .value =
+    product.specifications || '';
 
 
   document
@@ -972,12 +1546,44 @@ productForm.addEventListener(
 
     try {
 
-      const productData = {
+     const productData = {
 
         name:
           document
             .getElementById(
               'product-name'
+            )
+            .value
+            .trim(),
+
+        brand:
+          document
+            .getElementById(
+              'product-brand'
+            )
+            .value
+            .trim(),
+
+        model:
+          document
+            .getElementById(
+              'product-model'
+            )
+            .value
+            .trim(),
+
+        description:
+          document
+            .getElementById(
+              'product-description'
+            )
+            .value
+            .trim(),
+
+        specifications:
+          document
+            .getElementById(
+              'product-specifications'
             )
             .value
             .trim(),

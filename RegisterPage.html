@@ -9,13 +9,22 @@
     content="width=device-width, initial-scale=1"
   >
 
-  <title>DomusUtilitas | Register</title>
+  <title>Domus Utilitas | Register</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
 
-<body class="min-h-screen bg-gray-900 text-gray-100">
+<body class="min-h-screen bg-gray-900 text-gray-100" 
+    style =
+    "background-image: linear-gradient(
+      rgba(3, 7, 18, 0.6),
+      rgba(3, 7, 18, 0.6)
+    ),
+    url(https://cdn.pixabay.com/photo/2016/11/18/17/20/living-room-1835923_1280.jpg);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat; ">
 
 
   <!-- =========================
@@ -31,7 +40,7 @@
 
         <img
           src="logo.png"
-          class="h-11 w-11 rounded-full"
+          class="h-11 w-15 rounded-full object-contain"
           alt="DomusUtilitas"
         >
 
@@ -104,6 +113,32 @@
 
       </div>
 
+      <!-- EMAIL -->
+      <div>
+
+        <label
+          for="email"
+          class="mb-1 block text-sm text-gray-300"
+        >
+          Email
+        </label>
+
+        <input
+          id="email"
+          name="email"
+          type="email"
+          required
+          maxlength="150"
+          autocomplete="email"
+          placeholder="example@email.com"
+          class="w-full rounded border border-gray-700 bg-gray-900 px-3 py-2 outline-none focus:border-blue-500"
+        >
+
+        <p class="mt-1 text-xs text-gray-500">
+          A verification code will be sent to this email.
+        </p>
+
+      </div>
 
       <!-- PASSWORD -->
       <div>
@@ -363,6 +398,14 @@ document
                   .value
                   .trim(),
 
+              email:
+                document
+                  .getElementById(
+                    'email'
+                  )
+                  .value
+                  .trim(),
+
               password:
                 password,
 
@@ -392,7 +435,8 @@ document
         // Registration automatically
         // logs the customer in.
         window.location.href =
-          'ProductPage.html';
+        data.redirect ||
+        'VerifyEmailPage.html';
 
 
       } catch (error) {

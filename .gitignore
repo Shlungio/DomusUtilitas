@@ -1,4 +1,12 @@
+# Private database config
 DomusUtilitas_api/db.php
 
+# Private email / SMTP config
+DomusUtilitas_api/mail_config.php
+
+# Composer dependencies
+/vendor/
+
+# Windows system files
 Thumbs.db
 Desktop.ini

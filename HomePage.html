@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>DomusUtilitas | Home</title>
+  <title>Domus Utilitas | Home</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
@@ -28,7 +28,7 @@
 	  
        <img
 		  src="logo.png"
-		  class="h-11 w-11 rounded-full"
+		  class="h-11 w-15 rounded-full object-contain"
 		  alt="DomusUtilitas"
 		>
 
@@ -68,6 +68,14 @@
           class="hidden rounded-lg px-4 py-2 transition hover:bg-gray-800"
         >
           Orders
+        </a>
+
+        <a
+          id="profile-link"
+          href="ProfilePage.html"
+          class="hidden rounded-lg px-4 py-2 transition hover:bg-gray-800"
+        >
+          Profile
         </a>
 
         <a
@@ -188,8 +196,8 @@
 
             <img
               src="logo.png"
-              alt="DomusUtilitas"
-              class="mx-auto mb-5 h-32 w-32 rounded-full object-cover"
+              alt="Domus Utilitas"
+              class="mx-auto mb-5 h-32 w-50 object-cover"
             >
 
             <h3 class="text-2xl font-bold">
@@ -232,25 +240,32 @@
       </div>
 
 
-      <div class="grid gap-6 md:grid-cols-3">
+      <div class="grid gap-6 md:grid-cols-3" >
 
         <!-- HOUSE APPLIANCES -->
-        <div class="rounded-2xl bg-white p-8 shadow transition hover:-translate-y-1 hover:shadow-lg">
+        <div class="rounded-2xl p-8 shadow transition hover:-translate-y-1 hover:shadow-lg" style="background-image: linear-gradient(
+      rgba(3, 7, 18, 0.6),
+      rgba(3, 7, 18, 0.6)
+    ),
+    url(kitchendecor.jpg);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;">
 
           <div class="mb-5 flex h-14 w-14 items-center justify-center rounded-xl bg-blue-100 text-2xl">
             🏠
           </div>
 
-          <h3 class="mb-3 text-xl font-bold">
+          <h3 class="mb-3 text-xl font-bold text-white">
             House Appliances
           </h3>
 
-          <p class="mb-5 leading-7 text-gray-600">
+          <p class="mb-5 leading-7 text-gray-300">
             Appliances for cooking, cleaning, climate control, and everyday
             household tasks.
           </p>
 
-          <p class="text-sm font-medium text-gray-500">
+          <p class="text-sm font-medium text-gray-100">
             Cooking • Floor Care • Climate Wellness
           </p>
 
@@ -258,22 +273,29 @@
 
 
         <!-- TEXTILE -->
-        <div class="rounded-2xl bg-white p-8 shadow transition hover:-translate-y-1 hover:shadow-lg">
+        <div class="rounded-2xl p-8 shadow transition hover:-translate-y-1 hover:shadow-lg" style="background-image: linear-gradient(
+      rgba(3, 7, 18, 0.6),
+      rgba(3, 7, 18, 0.6)
+    ),
+    url(tilesdecor.jpg);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;">
 
-          <div class="mb-5 flex h-14 w-14 items-center justify-center rounded-xl bg-purple-100 text-2xl">
+          <div class="mb-5 flex h-14 w-14 items-center justify-center rounded-xl bg-blue-100 text-2xl">
             🛏️
           </div>
 
-          <h3 class="mb-3 text-xl font-bold">
+          <h3 class="mb-3 text-xl font-bold text-white">
             Textile
           </h3>
 
-          <p class="mb-5 leading-7 text-gray-600">
+          <p class="mb-5 leading-7 text-gray-300">
             Comfortable and practical textile products for bedrooms,
             bathrooms, and dining spaces.
           </p>
 
-          <p class="text-sm font-medium text-gray-500">
+          <p class="text-sm font-medium text-gray-100">
             Bedding • Bath • Dining
           </p>
 
@@ -281,22 +303,29 @@
 
 
         <!-- GADGETS -->
-        <div class="rounded-2xl bg-white p-8 shadow transition hover:-translate-y-1 hover:shadow-lg">
+        <div class="rounded-2xl p-8 shadow transition hover:-translate-y-1 hover:shadow-lg" style="background-image: linear-gradient(
+      rgba(3, 7, 18, 0.6),
+      rgba(3, 7, 18, 0.6)
+    ),
+    url(gadgetsdecor.jpg);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;">
 
-          <div class="mb-5 flex h-14 w-14 items-center justify-center rounded-xl bg-green-100 text-2xl">
+          <div class="mb-5 flex h-14 w-14 items-center justify-center rounded-xl bg-blue-100 text-2xl">
             💻
           </div>
 
-          <h3 class="mb-3 text-xl font-bold">
+          <h3 class="mb-3 text-xl font-bold text-white">
             Gadgets
           </h3>
 
-          <p class="mb-5 leading-7 text-gray-600">
+          <p class="mb-5 leading-7 text-gray-300">
             Technology essentials for computers, mobile devices, and
             personal entertainment.
           </p>
 
-          <p class="text-sm font-medium text-gray-500">
+          <p class="text-sm font-medium text-gray-100">
             PC • Phone & Tablets • Audio
           </p>
 
@@ -503,6 +532,11 @@ async function checkSession() {
       orders.href = 'OrderHistoryPage.html';
       orders.classList.remove('hidden');
 
+      const profile =
+        document.getElementById('profile-link');
+
+      profile.href = 'ProfilePage.html';
+      profile.classList.remove('hidden');
 
       const cart =
         document.getElementById('cart-link');

@@ -9,7 +9,7 @@
     content="width=device-width, initial-scale=1"
   >
 
-  <title>DomusUtilitas | Products</title>
+  <title>Domus Utilitas | Products</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
@@ -33,7 +33,7 @@
 
         <img
           src="logo.png"
-          class="h-11 w-11 rounded-full"
+          class="h-11 w-15 rounded-full object-contain"
           alt="DomusUtilitas"
         >
 
@@ -69,6 +69,12 @@
             Orders
           </a>
 
+          <a
+            href="ProfilePage.html"
+            class="hover:text-blue-400"
+          >
+            Profile
+          </a>
 
           <a
             href="CartPage.html"
@@ -131,6 +137,41 @@
 
     </div>
 
+    <!-- =========================
+        PRODUCT FILTERS
+    ========================== -->
+    <div class="mt-6">
+
+      <!-- CATEGORY FILTER -->
+      <div class="mb-4">
+
+        <p class="mb-2 text-sm font-semibold text-gray-300">
+          Categories
+        </p>
+
+        <div
+          id="category-filters"
+          class="flex flex-wrap justify-center gap-2"
+        ></div>
+
+      </div>
+
+      <!-- SUBCATEGORY FILTER -->
+      <div>
+
+        <p class="mb-2 text-sm font-semibold text-gray-300">
+          Subcategories
+        </p>
+
+        <div
+          id="subcategory-filters"
+          class="flex flex-wrap justify-center gap-2"
+        ></div>
+
+      </div>
+
+    </div>
+
 
     <!-- STATUS -->
     <p
@@ -168,6 +209,8 @@ const KEY = 'du_cart_v1';
 
 let products = [];
 
+let selectedCategory = 'All';
+let selectedSubcategory = 'All';
 
 // ==========================
 // CHECK CUSTOMER SESSION
@@ -405,6 +448,178 @@ function createElement(
 
 }
 
+// ==========================
+// RENDER FILTERS
+// ==========================
+
+function renderFilters() {
+
+  const categoryRoot =
+    document.getElementById(
+      'category-filters'
+    );
+
+
+  const subcategoryRoot =
+    document.getElementById(
+      'subcategory-filters'
+    );
+
+
+  categoryRoot.replaceChildren();
+
+  subcategoryRoot.replaceChildren();
+
+
+  // ==========================
+  // GET CATEGORIES
+  // ==========================
+
+  const categories = [
+    'All',
+    ...new Set(
+      products.map(
+        product =>
+          product.category_name
+      )
+    )
+  ];
+
+
+  categories.forEach(
+    category => {
+
+      const button =
+        document.createElement(
+          'button'
+        );
+
+
+      button.type =
+        'button';
+
+
+      button.textContent =
+        category;
+
+
+      const isSelected =
+        selectedCategory === category;
+
+      button.className =
+      isSelected
+        ? 'rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow transition'
+        : 'rounded-lg border border-gray-700 bg-gray-800 px-4 py-2 text-sm text-gray-300 transition hover:border-blue-500 hover:bg-gray-700 hover:text-blue-400';
+
+      button.onclick =
+        () => {
+
+          selectedCategory =
+            category;
+
+
+          // RESET SUBCATEGORY
+          selectedSubcategory =
+            'All';
+
+
+          renderFilters();
+
+          render();
+
+        };
+
+
+      categoryRoot.appendChild(
+        button
+      );
+
+    }
+  );
+
+
+  // ==========================
+  // GET SUBCATEGORIES
+  // ==========================
+
+  let availableProducts =
+    products;
+
+
+  if (
+    selectedCategory !== 'All'
+  ) {
+
+    availableProducts =
+      products.filter(
+        product =>
+          product.category_name ===
+          selectedCategory
+      );
+
+  }
+
+
+  const subcategories = [
+    'All',
+    ...new Set(
+      availableProducts.map(
+        product =>
+          product.subcategory_name
+      )
+    )
+  ];
+
+
+  subcategories.forEach(
+    subcategory => {
+
+      const button =
+        document.createElement(
+          'button'
+        );
+
+
+      button.type =
+        'button';
+
+
+      button.textContent =
+        subcategory;
+
+
+      const isSelected =
+        selectedSubcategory ===
+        subcategory;
+
+
+      button.className =
+      isSelected
+        ? 'rounded-lg bg-blue-500 px-4 py-2 text-sm font-semibold text-white shadow transition'
+        : 'rounded-lg border border-gray-700 bg-gray-800 px-4 py-2 text-sm text-gray-300 transition hover:border-blue-500 hover:bg-gray-700 hover:text-blue-400';
+
+      button.onclick =
+        () => {
+
+          selectedSubcategory =
+            subcategory;
+
+
+          renderFilters();
+
+          render();
+
+        };
+
+
+      subcategoryRoot.appendChild(
+        button
+      );
+
+    }
+  );
+
+}
 
 // ==========================
 // RENDER PRODUCTS
@@ -454,19 +669,34 @@ function render() {
       .toLowerCase();
 
 
-    const matchesSearch =
+        const matchesSearch =
       !searchValue ||
       searchableText.includes(
         searchValue
       );
 
 
-    if (!matchesSearch) {
+    const matchesCategory =
+      selectedCategory === 'All' ||
+      product.category_name ===
+        selectedCategory;
+
+
+    const matchesSubcategory =
+      selectedSubcategory === 'All' ||
+      product.subcategory_name ===
+        selectedSubcategory;
+
+
+    if (
+      !matchesSearch ||
+      !matchesCategory ||
+      !matchesSubcategory
+    ) {
 
       return;
 
     }
-
 
     shownProducts++;
 
@@ -603,12 +833,14 @@ function render() {
 
             // NAME
             const name =
-              createElement(
-                'h4',
-                'font-semibold',
-                product.name
-              );
+            createElement(
+              'h4',
+              'h-[72px] line-clamp-3 font-semibold leading-6',
+              product.name
+            );
 
+          name.title = product.name;
+          
 
             // PRICE
             const price =
@@ -628,12 +860,31 @@ function render() {
                 product.stock
               );
 
+              // ==========================
+            // VIEW DETAILS BUTTON
+            // ==========================
 
-            // BUTTON
+            const detailsButton =
+              createElement(
+                'a',
+                'rounded border border-blue-500 px-3 py-2 text-center text-sm font-semibold text-blue-400 transition hover:bg-blue-600 hover:text-white',
+                'View Details'
+              );
+
+
+            detailsButton.href =
+              'ProductDetailsPage.html?id=' +
+              encodeURIComponent(product.id);
+
+
+            // ==========================
+            // ADD TO CART BUTTON
+            // ==========================
+
             const button =
               createElement(
                 'button',
-                'mt-auto rounded bg-blue-600 px-3 py-2 text-sm hover:bg-blue-500',
+                'rounded bg-blue-600 px-3 py-2 text-sm hover:bg-blue-500',
                 Number(product.stock) > 0
                   ? 'Add to cart'
                   : 'Out of stock'
@@ -660,13 +911,30 @@ function render() {
               () => add(product);
 
 
-            card.append(
-              image,
-              name,
-              price,
-              stock,
+            // ==========================
+            // BUTTON CONTAINER
+            // ==========================
+
+            const actions =
+              createElement(
+                'div',
+                'mt-auto grid gap-2'
+              );
+
+
+            actions.append(
+              detailsButton,
               button
             );
+            // ADD TO CART BUTTON 
+
+            card.append(
+            image,
+            name,
+            price,
+            stock,
+            actions
+          );
 
 
             grid.appendChild(
@@ -727,8 +995,10 @@ async function loadProducts() {
 
 
     products =
-      data.products;
+    data.products;
 
+
+    renderFilters();
 
     render();
 
